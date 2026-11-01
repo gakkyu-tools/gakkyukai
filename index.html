@@ -66,6 +66,10 @@ html.b-hi #tabs button svg.ic{width:1.3em;height:1.3em}
 .rdots span{font-size:.82rem;padding:0 .5rem;border-radius:999px;border:2px solid #94a3b8;color:var(--sub);background:#fff}
 .rdots span.on{border-color:var(--ink);background:var(--ink);color:#fff;font-weight:bold}
 .rdots span.done{text-decoration:line-through;opacity:.7}
+.rdots button{font:inherit;font-size:.82rem;min-height:32px;padding:0 .6rem;border-radius:999px;border:2px solid #94a3b8;color:var(--sub);background:#fff;cursor:pointer}
+.rdots button.on{border-color:var(--ink);background:var(--ink);color:#fff;font-weight:bold}
+.rdots button.done{text-decoration:line-through;opacity:.7}
+@media (min-width:901px) and (pointer:coarse){:root .lay .rosen.go li{padding-top:.35em;padding-bottom:.35em}:root .lay .rosen.go li li{padding-top:.2em;padding-bottom:.2em}:root .lay .rosen.go{max-height:calc(100vh - 7rem);overflow-y:auto}}
 .rall{margin-top:.4rem;text-align:center}
 .rall button{min-height:44px;padding:.1rem .9rem;border:2px dashed #94a3b8;border-radius:999px;background:#fff;color:var(--sub);font-weight:bold;font-size:.9rem}
 #band,#sub{display:none}
@@ -115,20 +119,20 @@ ul.tl li,ol.tl li{margin:.2rem 0;font-size:1.08rem}
 .navbtns{display:flex;gap:.6rem;flex-wrap:wrap;margin:.6rem 0}
 .navbtns .btn{flex:1 1 9rem;min-height:56px;font-size:1.05rem}
 /* 次へ／もどる：いちばん目立つ1組。画面の下にいつも出る */
-.navbar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:1fr 2.2fr;gap:.6rem;max-width:1366px;margin:0 auto;padding:.5rem 1rem calc(.5rem + env(safe-area-inset-bottom));background:#fff;border-top:2px solid var(--line);box-shadow:0 -4px 14px rgba(0,0,0,.1)}
-main.hasnav{padding-bottom:6.5rem}
-html.b-lo main.hasnav{padding-bottom:7.5rem}
-.navbar button{min-height:64px;border-radius:16px;font-weight:bold;font-size:1.2rem;display:flex;align-items:center;justify-content:center;gap:.4rem}
+.navbar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:1fr 2.2fr;gap:.6rem;max-width:1366px;margin:0 auto;padding:.3rem 1rem calc(.3rem + env(safe-area-inset-bottom));background:#fff;border-top:2px solid var(--line);box-shadow:0 -4px 14px rgba(0,0,0,.1)}
+main.hasnav{padding-bottom:4.4rem}
+html.b-lo main.hasnav{padding-bottom:5rem}
+.navbar button{min-height:46px;border-radius:12px;font-weight:bold;font-size:1.05rem;display:flex;align-items:center;justify-content:center;gap:.4rem}
 .navbar .back{border:3px solid #1b2433;background:#fff;color:var(--ink)}
-.navbar .go{border:3px solid #1e3a8a;background:var(--go);color:#fff;font-size:1.45rem;box-shadow:0 5px 0 #1e3a8a}
-.navbar .go:active{transform:translateY(3px);box-shadow:0 2px 0 #1e3a8a}
-.navbar svg.ic{width:1.4em;height:1.4em}
+.navbar .go{border:3px solid #1e3a8a;background:var(--go);color:#fff;font-size:1.2rem;box-shadow:0 3px 0 #1e3a8a}
+.navbar .go:active{transform:translateY(2px);box-shadow:0 1px 0 #1e3a8a}
+.navbar svg.ic{width:1.2em;height:1.2em}
 .navbar button{white-space:nowrap;padding:.1rem .5rem}
 .rolehead{flex-wrap:wrap}
 .rolehead b{white-space:nowrap}
-html.b-lo .navbar button{min-height:80px;font-size:1.3rem}
-html.b-lo .navbar .go{font-size:1.65rem}
-html.b-hi .navbar button{min-height:56px}
+html.b-lo .navbar button{min-height:52px;font-size:1.15rem}
+html.b-lo .navbar .go{font-size:1.35rem}
+html.b-hi .navbar button{min-height:44px}
 html.b-hi .navbar .go{font-size:1.25rem}
 .chips{display:flex;flex-wrap:wrap;gap:.5rem;margin:.4rem 0}
 .chip{display:inline-block;padding:.3rem .9rem;border:3px solid var(--rc);border-radius:14px;background:#fff;font-size:1.4rem;font-weight:bold;line-height:1.5}
@@ -378,6 +382,15 @@ html.b-lo .rosen .nm{word-break:keep-all;overflow-wrap:normal}
 /* 広い画面では一覧は左の路線図で見えるので、「ぜんぶ見る」は「えらんで とぶ」と呼ぶ */
 .bw{display:none}
 @media (min-width:901px){.bw{display:inline}.bn{display:none}}
+.rosen .rt small{display:block;font-weight:normal;font-size:.8em;color:var(--sub)}
+.rosen.go li[data-act]{cursor:pointer;border-radius:8px}
+.rosen.go li[data-act]:hover>.nm{text-decoration:underline;text-underline-offset:.2em}
+.rosen.go li[data-act]:focus-visible{outline:3px solid var(--rs-now);outline-offset:1px}
+.rosen.go li[data-act]:active>.nm{color:var(--rs-now)}
+@media (min-width:901px){.lay .rall,.lay #band,.lay #sub{display:none!important}}
+/* 押す的として小さすぎないように、背の低い画面のつめ方をゆるめる（下の帯が低くなった分） */
+@media (min-width:901px) and (max-height:860px){.lay .rosen.go{font-size:.86rem}.lay .rosen.go li{padding-top:.17em;padding-bottom:.17em}.lay .rosen.go li li{padding-top:.06em;padding-bottom:.06em}html.b-lo .lay .rosen.go{font-size:.8rem}html.b-lo .lay .rosen.go li{padding-top:.1em;padding-bottom:.1em}}
+@media (min-width:901px) and (max-height:740px){.lay .rosen.go{font-size:.8rem}.lay .rosen.go li{padding-top:.08em;padding-bottom:.08em}html.b-lo .lay .rosen.go{font-size:.72rem}html.b-lo .lay .rosen.go li{padding-top:.05em;padding-bottom:.05em}.lay .rosen.go li li{padding-top:0;padding-bottom:0}}
 @media print{.rosen,.rhbar{display:none!important}}
 @media print{
  @page{size:A4 portrait;margin:10mm}
@@ -860,6 +873,7 @@ DATA.ui.menu={all:'メニュー'};
 DATA.ui.prevLab={lo:'まえ',mh:'前'};
 DATA.ui.rosen={lo:'きょうの ながれ',mh:'今日の流れ'};
 DATA.ui.pickBand={lo:'えらんで とぶ',mh:'えらんで とぶ'};
+DATA.ui.rosenGo={lo:'おすと そこへ とぶ',mh:'おすと そこへ とぶ'};
 DATA.ui.prevBtn={lo:'もどる',mh:'もどる'};
 DATA.ui.goBtn={lo:'つぎへ',mh:'次へ'};
 DATA.ui.bigShow={lo:'大きく 見せる',mh:'大きく{表示|ひょうじ}'};
@@ -1318,17 +1332,17 @@ function rosenState(){
  var st=stages(),cur=curStage(),ci=0;st.forEach(function(s,k){if(s.id===cur.id)ci=k;});
  return {st:st,ci:ci};
 }
-function rosenHtml(){
+function rosenHtml(go){
  var r=rosenState(),st=r.st,ci=r.ci;
- var h='<nav class="rosen" aria-label="'+esc(T(DATA.ui.rosen))+'"><div class="rt">'+F(DATA.ui.rosen)+'</div><ol>';
+ var h='<nav class="rosen'+(go?' go':'')+'" aria-label="'+esc(T(DATA.ui.rosen))+'"><div class="rt">'+F(DATA.ui.rosen)+(go?'<small>'+F(DATA.ui.rosenGo)+'</small>':'')+'</div><ol>';
  st.forEach(function(s,k){
   var c=k<ci?'done':(k===ci?'now':'todo');
-  h+='<li class="'+c+'"'+(c==='now'?' aria-current="step"':'')+'><i class="dt"></i><span class="nm">'+F(s.n)+'</span>';
+  h+='<li class="'+c+'"'+(c==='now'?' aria-current="step"':'')+(go?' data-act="stage" data-v="'+s.id+'" role="button" tabindex="0"':'')+'><i class="dt"></i><span class="nm">'+F(s.n)+'</span>';
   if(s.talk&&pl(0)){
    h+='<ol>';
    for(var p=0;p<nP();p++){
     var pc=c==='todo'?'todo':(c==='done'?'done':(p<pos.pil?'done':(p===pos.pil?'now':'todo')));
-    h+='<li class="'+pc+'"'+(pc==='now'?' aria-current="step"':'')+'><i class="dt"></i><span class="nm">'+pl(p)+'</span></li>';
+    h+='<li class="'+pc+'"'+(pc==='now'?' aria-current="step"':'')+(go?' data-act="ph" data-p="'+p+'" data-q="'+phList(p)[0]+'" role="button" tabindex="0"':'')+'><i class="dt"></i><span class="nm">'+pl(p)+'</span></li>';
    }
    h+='</ol>';
   }
@@ -1348,7 +1362,7 @@ function rosenFocus(){
 function roadHtml(){
  var a=seq(),i=seqIdx(),it=curItem(),pv=a[i-1],nx=a[i+1];
  var dots='';
- if(it.talk){var ql=phList(pos.pil),qi=ql.indexOf(pos.ph);dots='<div class="rdots">'+ql.map(function(q,k){return '<span class="'+(k===qi?'on':(k<qi?'done':''))+'">'+F(phName(q))+'</span>';}).join('')+'</div>';}
+ if(it.talk){var ql=phList(pos.pil),qi=ql.indexOf(pos.ph);dots='<div class="rdots">'+ql.map(function(q,k){return '<button type="button" data-act="ph" data-p="'+pos.pil+'" data-q="'+q+'" class="'+(k===qi?'on':(k<qi?'done':''))+'">'+F(phName(q))+'</button>';}).join('')+'</div>';}
  var nowName=it.talk?F(phName(pos.ph)):F(it.n);var nowSub=it.talk?'<div class="nsub">'+F(it.stage.n)+(pl(CP)?'　'+pl(CP):'')+'</div>':'';
  var h='<div class="rline"><div class="rprev">'+(pv?'<small>'+F(DATA.ui.prevLab)+'</small>'+itemAt(pv):'')+'</div><span class="rarr">›</span>'+
   '<div class="rnow"><small>'+F(DATA.ui.now)+'</small>'+nowSub+'<div class="nm">'+nowName+'</div>'+dots+'</div>'+
@@ -1388,7 +1402,7 @@ function renderAll(){
  if(S>1&&!noteClosed()[S])h+='<div class="note"><span>'+F(DATA.ui.stepNote[S])+'</span><button class="nclose" data-act="closenote">'+F(DATA.ui.closeNote)+'</button></div>';
  var tabs=['prep','s','f','k','n','m'];
  h+='<div id="tabs" role="tablist">'+tabs.map(function(t){var lab=t==='prep'?F(DATA.ui.prepTab):role(t);return '<button role="tab" aria-selected="'+(TAB===t)+'" data-act="tab" data-v="'+t+'" class="'+(TAB===t?'on':'')+'" style="--tc:'+RC[t][0]+'">'+IC[t]+'<span>'+lab+'</span></button>';}).join('')+'</div>';
- if(TAB!=='prep')h+='<div class="lay">'+rosenHtml()+'<div class="lc">'+roadHtml();
+ if(TAB!=='prep')h+='<div class="lay">'+rosenHtml(1)+'<div class="lc">'+roadHtml();
  var body=TAB==='prep'?tabPrep():TAB==='s'?tabS():TAB==='f'?tabF():TAB==='k'?tabK():TAB==='n'?tabN():tabM();
  var nav=TAB==='prep'?'':'<div class="navbar"><button class="back" data-act="prev">'+IC.back+F(DATA.ui.prevBtn)+'</button><button class="go" data-act="next">'+F(DATA.ui.goBtn)+IC.go+'</button></div>';
  h+='<main id="main"'+(nav?' class="hasnav"':'')+'>'+body+'<p class="goal">'+F(DATA.ui.goal[S])+'</p>'+nav+'</main>';
@@ -1494,6 +1508,7 @@ function renderTeacher(){
 }
 
 /* ---------- 操作 ---------- */
+document.addEventListener('keydown',function(e){var t=e.target;if((e.key==='Enter'||e.key===' ')&&t&&t.matches&&t.matches('.rosen li[data-act]')){e.preventDefault();t.click();}});
 document.addEventListener('click',function(e){
  var b=e.target.closest('[data-act]');
  if(menuOpen&&(!b||b.getAttribute('data-act')!=='menu')&&!e.target.closest('#menu')){menuOpen=false;if(!b){renderAll();return;}}
