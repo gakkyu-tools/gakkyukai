@@ -1,0 +1,1491 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>学級会ナビ</title>
+<style>
+:root{--ink:#1b2433;--bg:#f5f6fa;--line:#c5cedb;--sub:#475569;--c:#1d4ed8;--rc:#1d4ed8;--rbg:#eef3fd;--go:#1d4ed8}
+*{box-sizing:border-box}
+html{font-size:18px;-webkit-text-size-adjust:100%}
+html.b-lo{font-size:21px}
+html.b-mid{font-size:19px}
+html.b-hi{font-size:17px}
+html.teacher{font-size:18px}
+html.tv{font-size:24px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"BIZ UDPGothic","BIZ UDGothic","Yu Gothic UI","Meiryo","Noto Sans JP",sans-serif;line-height:1.6;overflow-x:hidden;overflow-wrap:anywhere}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+h1,h2,h3,p,ol,ul{margin:0}
+rt{font-size:.55em;font-weight:normal}
+a{color:#1d4ed8}
+svg.ic{width:1.3em;height:1.3em;flex:0 0 auto;vertical-align:-.25em}
+#app{max-width:1366px;margin:0 auto}
+#app.wide{max-width:none}
+.nw{white-space:nowrap}
+/* ---- 上の帯（学年とステップ・メニュー） ---- */
+.top{display:flex;align-items:center;gap:.5rem;padding:.35rem 1rem;background:#fff;border-bottom:1px solid var(--line);position:relative}
+.top h1{font-size:1.05rem;color:var(--sub);white-space:nowrap}
+.top .lv{font-weight:bold;font-size:1rem;padding:.1rem .7rem;border-radius:999px;background:#1b2433;color:#fff;white-space:nowrap}
+.top .sp{flex:1}
+.clk{font-size:1.1rem;font-weight:bold;font-variant-numeric:tabular-nums;color:var(--sub);min-width:3.6em;text-align:center}
+.menubtn{min-height:44px;min-width:44px;display:inline-flex;align-items:center;gap:.3rem;padding:.1rem .7rem;border:2px solid var(--line);border-radius:10px;background:#fff;font-size:.9rem;font-weight:bold;color:var(--sub)}
+.menu{position:absolute;right:.6rem;top:100%;z-index:40;background:#fff;border:2px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:.4rem;display:flex;flex-direction:column;gap:.3rem;min-width:14rem}
+.menu button,.menu a{min-height:44px;display:flex;align-items:center;gap:.4rem;padding:.2rem .7rem;border:0;border-radius:8px;background:#f3f5f9;font-size:.95rem;font-weight:bold;color:var(--ink);text-decoration:none;text-align:left}
+.agenda{padding:.3rem 1rem;font-size:.95rem;background:#fff;border-bottom:1px solid var(--line);color:var(--sub)}
+.agenda b{color:var(--ink)}
+.agenda small{display:block;font-size:.9rem}
+.note{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;padding:.3rem 1rem;font-size:.95rem;background:#334155;color:#fff}
+.note span{flex:1 1 14rem}
+.nclose{min-height:44px;padding:.1rem .9rem;border:2px solid #fff;border-radius:10px;background:transparent;color:#fff;font-weight:bold}
+/* ---- 役割タブ（色＋マーク＋文字） ---- */
+#tabs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:.4rem;padding:.6rem 1rem 0}
+#tabs button{--tc:#4b5563;min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.1rem;border:3px solid var(--tc);border-radius:14px;background:#fff;color:var(--ink);font-weight:bold;font-size:1rem;padding:.2rem .2rem;line-height:1.2}
+#tabs button svg.ic{width:1.6em;height:1.6em;color:var(--tc)}
+#tabs button.on{background:var(--tc);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.2)}
+#tabs button.on svg.ic{color:#fff}
+#tabs button{white-space:nowrap}
+@media (min-width:701px) and (max-width:1000px){#tabs{grid-template-columns:repeat(3,minmax(0,1fr))}}
+html.b-lo #tabs button{min-height:80px;font-size:1.02rem}
+html.b-lo #tabs button svg.ic{width:2em;height:2em}
+html.b-hi #tabs button{min-height:52px;flex-direction:row;gap:.35rem;border-width:2px;font-size:.98rem}
+html.b-hi #tabs button svg.ic{width:1.3em;height:1.3em}
+/* ---- いまの段階（道のり） ---- */
+#road{margin:.6rem 1rem 0;padding:.5rem .7rem;background:#fff;border:2px solid var(--line);border-radius:14px}
+.rline{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,2.4fr) auto minmax(0,1fr);gap:.4rem;align-items:center}
+.rprev,.rnext{font-size:.9rem;color:var(--sub);line-height:1.35}
+.rprev{text-align:right;opacity:.75}
+.rprev small,.rnext small{display:block;font-size:.78rem}
+.rnext{font-weight:bold}
+.rarr{color:#94a3b8;font-size:1.2rem}
+.rnow{border:4px solid var(--rc);border-radius:14px;padding:.35rem .7rem;background:var(--rbg);text-align:center}
+.rnow .nm{font-size:1.45rem;font-weight:bold;line-height:1.3}
+.rnow small{display:block;font-size:.85rem;color:var(--sub)}
+.rnow .nsub{font-size:.95rem;font-weight:bold;color:var(--sub)}
+.rdots{display:flex;flex-wrap:wrap;justify-content:center;gap:.25rem;margin-top:.25rem}
+.rdots span{font-size:.82rem;padding:0 .5rem;border-radius:999px;border:2px solid #94a3b8;color:var(--sub);background:#fff}
+.rdots span.on{border-color:var(--ink);background:var(--ink);color:#fff;font-weight:bold}
+.rdots span.done{text-decoration:line-through;opacity:.7}
+.rall{margin-top:.4rem;text-align:center}
+.rall button{min-height:44px;padding:.1rem .9rem;border:2px dashed #94a3b8;border-radius:999px;background:#fff;color:var(--sub);font-weight:bold;font-size:.9rem}
+#band,#sub{display:none}
+#road.open #band{display:flex;flex-direction:column;gap:.25rem;margin-top:.5rem}
+#road.open #sub{display:flex;flex-wrap:wrap;gap:.3rem;margin:.3rem 0 .2rem 1.2rem}
+#band button{min-height:44px;text-align:left;border:2px solid var(--line);border-radius:10px;background:#fff;padding:.1rem .7rem;font-size:.95rem}
+#band button.now{border:3px solid var(--rc);background:var(--rbg);font-weight:bold}
+#band button.past{color:#64748b;background:#f1f5f9}
+#sub .pg{display:flex;flex-wrap:wrap;gap:.25rem;align-items:center}
+#sub .pg b{font-size:.9rem;margin-right:.2rem}
+#sub button{min-height:44px;border:2px solid var(--line);border-radius:999px;background:#fff;padding:.05rem .7rem;font-size:.9rem}
+#sub button.now{border:3px solid var(--rc);background:var(--rbg);font-weight:bold}
+#sub button.past{color:#64748b;background:#f1f5f9}
+html.b-lo .rnow .nm{font-size:1.6rem}
+html.b-lo #band button,html.b-lo #sub button,html.b-lo .flow li,html.b-lo .bignow,html.b-lo .rnow .nm{word-break:keep-all;overflow-wrap:normal}
+html.b-hi .rnow{border-width:3px}
+html.b-hi .rnow .nm{font-size:1.3rem}
+/* ---- 中身 ---- */
+main{padding:.7rem 1rem 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:.8rem;align-items:start}
+.card{background:#fff;border:2px solid var(--line);border-radius:14px;padding:.7rem .9rem;margin-bottom:.8rem}
+.grid .card,.grid details.fold{margin-bottom:0}
+.grid>div>*+*{margin-top:.8rem}
+.card h2{font-size:1.2rem;margin-bottom:.4rem;color:var(--rc)}
+.card h3{font-size:1.05rem;margin:.6rem 0 .2rem}
+.card.main{border:3px solid var(--rc)}
+.rolehead{display:flex;align-items:center;gap:.45rem;font-weight:bold;color:var(--rc);font-size:1.05rem;margin-bottom:.3rem}
+.rolehead svg.ic{width:1.5em;height:1.5em}
+.rolehead span{color:var(--sub);font-weight:normal;font-size:.92rem}
+.stagehead{background:var(--rc);color:#fff;border-radius:12px;padding:.3rem .9rem;margin-bottom:.6rem;font-size:1.3rem;font-weight:bold}
+.stagehead small{display:block;font-weight:normal;font-size:1rem}
+.stagehead .fill,.tvnow .fill{background:transparent;color:#fff;border-bottom-color:#fff3b0}
+.bubble{background:#fff;border:2px solid #94a3b8;border-radius:16px 16px 16px 4px;padding:.45rem .8rem;margin:.4rem 0;font-size:1.15rem;line-height:1.7}
+.bubble.me{background:#fff8dc;border-color:#a16207;border-width:3px}
+.bubble.other{color:var(--sub);font-size:1rem}
+.bubble .r{display:inline-block;padding:0 .45rem;margin-right:.45rem;border-radius:8px;background:var(--sc,#475569);color:#fff;font-weight:bold;font-size:.85rem;line-height:1.6;vertical-align:.1em}
+.hint{margin:.3rem 0;padding:.25rem .6rem;background:#f1f5f9;border-left:6px solid var(--rc);border-radius:0 8px 8px 0;font-size:1rem}
+.lab{font-weight:bold;font-size:1.05rem;margin:.7rem 0 .2rem}
+.lab span{display:inline-block;padding:0 .6rem;border-radius:8px;color:#fff;background:var(--rc);margin-right:.4rem}
+ul.tl,ol.tl{padding-left:1.4rem}
+ul.tl li,ol.tl li{margin:.2rem 0;font-size:1.08rem}
+.ex{font-size:.95rem;color:var(--sub)}
+.btn{min-height:52px;padding:.2rem 1rem;border:3px solid #1b2433;border-radius:12px;background:#fff;font-weight:bold;color:var(--ink)}
+.btn.pri{background:#15803d;border-color:#166534;color:#fff}
+.btn.blue{background:var(--go);border-color:#1e3a8a;color:#fff}
+.btn.sm{min-height:48px;font-size:1rem}
+.navbtns{display:flex;gap:.6rem;flex-wrap:wrap;margin:.6rem 0}
+.navbtns .btn{flex:1 1 9rem;min-height:56px;font-size:1.05rem}
+/* 次へ／もどる：いちばん目立つ1組。画面の下にいつも出る */
+.navbar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:1fr 2.2fr;gap:.6rem;max-width:1366px;margin:0 auto;padding:.5rem 1rem calc(.5rem + env(safe-area-inset-bottom));background:#fff;border-top:2px solid var(--line);box-shadow:0 -4px 14px rgba(0,0,0,.1)}
+main.hasnav{padding-bottom:6.5rem}
+html.b-lo main.hasnav{padding-bottom:7.5rem}
+.navbar button{min-height:64px;border-radius:16px;font-weight:bold;font-size:1.2rem;display:flex;align-items:center;justify-content:center;gap:.4rem}
+.navbar .back{border:3px solid #1b2433;background:#fff;color:var(--ink)}
+.navbar .go{border:3px solid #1e3a8a;background:var(--go);color:#fff;font-size:1.45rem;box-shadow:0 5px 0 #1e3a8a}
+.navbar .go:active{transform:translateY(3px);box-shadow:0 2px 0 #1e3a8a}
+.navbar svg.ic{width:1.4em;height:1.4em}
+.navbar button{white-space:nowrap;padding:.1rem .5rem}
+.rolehead{flex-wrap:wrap}
+.rolehead b{white-space:nowrap}
+html.b-lo .navbar button{min-height:80px;font-size:1.3rem}
+html.b-lo .navbar .go{font-size:1.65rem}
+html.b-hi .navbar button{min-height:56px}
+html.b-hi .navbar .go{font-size:1.25rem}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem;margin:.4rem 0}
+.chip{display:inline-block;padding:.3rem .9rem;border:3px solid var(--rc);border-radius:14px;background:#fff;font-size:1.4rem;font-weight:bold;line-height:1.5}
+.chip.me{background:#fff8dc;border-color:#a16207}
+.fill{background:#fff3b0;border-bottom:3px solid #a16207;padding:0 .15rem;font-weight:bold}
+.blank{color:#854d0e;font-weight:bold;white-space:nowrap}
+/* たたむカード */
+details{margin:.5rem 0;border:2px solid #7c3aed;border-radius:12px;background:#faf7ff;padding:0 .7rem}
+details[open]{padding-bottom:.6rem}
+summary{cursor:pointer;min-height:48px;display:flex;align-items:center;gap:.4rem;font-weight:bold;font-size:1.05rem;color:#5b21b6}
+details details{border-color:#be185d;background:#fff}
+details details>summary{color:#9d174d}
+details.fold{background:#fff;border:2px solid var(--line);margin:0 0 .8rem}
+details.fold>summary{color:var(--ink);font-size:1.1rem}
+details.fold>summary::after{content:"＋";margin-left:auto;color:var(--sub)}
+details.fold[open]>summary::after{content:"－"}
+details.fold.trouble{border:3px solid #b91c1c;background:#fff8f7}
+details.fold.trouble>summary{color:#b91c1c}
+details.ref{border-color:#0f766e;background:#f2fbfb}
+details.ref>summary{color:#115e59}
+.cards2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:.5rem}
+.tk{border:2px solid var(--line);border-radius:12px;padding:.4rem .7rem;background:#fcfdff}
+.tk b{display:block;color:var(--rc);font-size:1.05rem}
+.tk ul{padding-left:1.3rem}
+.tk li{font-size:1.02rem;margin:.1rem 0}
+.trouble .tk{border-color:#e3a19b;background:#fff}
+.trouble .tk b{color:#b91c1c}
+.goal{margin:1rem 0 .2rem;font-size:.9rem;color:var(--sub)}
+.flow{list-style:none;padding:0;margin:.3rem 0}
+.flow li{padding:.3rem .7rem;margin:.2rem 0;border-radius:10px;border:2px solid var(--line);font-size:1.05rem;background:#fff}
+.flow li.now{border:3px solid var(--rc);background:var(--rbg);font-weight:bold}
+.flow li.past{color:#64748b;background:#f1f5f9}
+.bignow{font-size:1.8rem;font-weight:bold;line-height:1.35;margin:.2rem 0}
+.bignext{font-size:1.2rem;color:var(--sub)}
+.say-t{font-size:.95rem;color:var(--sub);font-weight:bold;margin-top:.5rem}
+.pos3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.35rem;margin:.3rem 0}
+.pos3 .tk{padding:.3rem .4rem}
+.pos3 .tk b{font-size:.98rem}
+.pos3 .tk p{font-size:.98rem;line-height:1.45}
+@media (max-width:700px){.pos3{grid-template-columns:1fr}}
+.opts2{display:flex;flex-wrap:wrap;gap:.4rem}
+.opts2 button{min-height:52px;padding:.2rem 1rem;border:3px solid #1b2433;border-radius:12px;background:#fff;font-weight:bold}
+.opts2 button.on{background:#15803d;border-color:#166534;color:#fff}
+/* フォーム */
+.fl{font-weight:bold;font-size:1.05rem;margin:.8rem 0 .2rem}
+.fl small{font-weight:normal;color:var(--sub);font-size:.92rem}
+.tx{width:100%;border:3px solid #64748b;border-radius:10px;padding:.4rem .6rem;background:#fffef5;font-size:1.1rem;min-height:52px}
+textarea.tx{min-height:90px;resize:vertical}
+.tx.num{width:5em}
+.prow{display:grid;grid-template-columns:auto 1fr auto;gap:.4rem;align-items:center;margin:.35rem 0}
+.prow .pl{font-weight:bold;white-space:nowrap}
+.prow .tx.min{width:4.2em;text-align:center}
+.chk{display:flex;flex-direction:column;gap:.4rem;margin:.3rem 0}
+.chk button{min-height:56px;text-align:left;border:3px solid #1b2433;border-radius:12px;background:#fff;font-weight:bold;padding:.2rem .8rem;font-size:1.05rem}
+.chk button.on{background:#15803d;border-color:#166534;color:#fff}
+.ok{color:#166534;font-weight:bold}
+.warn{color:#b91c1c;font-weight:bold}
+.linkbox{width:100%;font-size:.9rem;border:2px solid #64748b;border-radius:8px;padding:.3rem;background:#f6f8fb}
+.msg{min-height:1.4em}
+/* 時計 */
+.tcard{border:6px solid #15803d;border-radius:18px;background:#dcfce7;padding:.4rem .8rem;text-align:center}
+.tcard.warn1{border-color:#a16207;background:#fef08a}
+.tcard.over{border-color:#b91c1c;background:#fecaca}
+.digits{font-size:clamp(3.2rem,13vw,6.5rem);font-weight:bold;line-height:1.05;font-variant-numeric:tabular-nums}
+.tstatus{font-size:1.2rem;font-weight:bold;min-height:1.8rem}
+.tbtns{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:.3rem}
+.tbtns .btn{min-width:7rem;min-height:52px;font-size:1.05rem}
+.btn.big{display:inline-flex;align-items:center;gap:.35rem;background:#1b2433;border-color:#1b2433;color:#fff}
+.presets{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin:.3rem 0}
+.presets button{min-height:48px;padding:.1rem .8rem;border:3px solid #1b2433;border-radius:999px;background:#fff;font-weight:bold}
+/* 全画面の時計 */
+#fs{position:fixed;inset:0;z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;background:#0f172a;color:#fff;padding:2vmin;text-align:center}
+#fs.show{display:flex}
+#fs.warn1{background:#facc15;color:#111}
+#fs.over{background:#b91c1c;color:#fff}
+#fsdig{font-size:min(30vw,52vh);font-weight:bold;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em;white-space:nowrap}
+#fsst{font-size:min(7vw,7vh);font-weight:bold;min-height:1.2em;margin:.2em 0}
+#fs .fsb{display:flex;flex-wrap:wrap;gap:2vmin;justify-content:center;margin-top:1vmin}
+#fs .fsb button{min-height:56px;min-width:56px;padding:.2rem 1rem;border:3px solid currentColor;border-radius:14px;background:rgba(255,255,255,.12);color:inherit;font-size:max(18px,2.6vmin);font-weight:bold}
+#fs .fsclose{position:absolute;top:2vmin;right:2vmin}
+#fs .fsclose button{min-height:56px;min-width:56px;padding:.2rem 1rem;border:3px solid currentColor;border-radius:14px;background:rgba(255,255,255,.12);color:inherit;font-size:max(18px,2.6vmin);font-weight:bold}
+/* 黒板（縦書き・右から左） */
+.board{background:#1f4d3a;border:8px solid #8a5a14;border-radius:8px;padding:.4em;display:flex;flex-direction:row-reverse;gap:.5em;align-items:stretch;font-size:clamp(9px,2.6vw,15px);overflow:hidden;color:#fff}
+.board .sec{display:flex;flex-direction:row-reverse;gap:.3em;padding:.3em;border:1.5px dashed rgba(255,255,255,.5);border-radius:4px;align-items:flex-start}
+.board .t{writing-mode:vertical-rl;height:11.5em;padding:.35em .12em;border-radius:2px;background:#fff;color:#1b2433;font-weight:bold;line-height:1.2;overflow:hidden;font-size:1em}
+.board .t.y{background:#fff3b0}
+.boardsc{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+@media (max-width:700px){.boardsc .board{min-width:640px;font-size:13px}}
+.boardsc{overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media (max-width:700px){.boardsc .board{min-width:640px;font-size:13px}}
+.board .tcy{text-combine-upright:all}
+.board .t.ph{background:#e2e8f0;height:6.5em}
+.board .t.ph.now{background:#facc15}
+.board .t .tag{display:inline-block;background:#b91c1c;color:#fff;padding:.15em 0;margin-bottom:.2em}
+.board .t.op{background:#fff}
+.board .mk-r{color:#c62828}
+.board .mk-b{color:#1565c0}
+.board .arr{align-self:center;color:#ffe07a;font-size:1.1em}
+.boardlg{display:flex;flex-direction:row-reverse;justify-content:space-between;gap:.3rem;font-size:.82rem;color:var(--sub);margin-top:.25rem;flex-wrap:wrap}
+.who3{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:.5rem}
+.who3 .tk b{font-size:1.05rem}
+/* 選ぶ画面 */
+.choose{max-width:1000px;margin:0 auto;padding:1rem}
+.choose h2{font-size:1.35rem;margin:1rem 0 .4rem}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:.6rem}
+.opts button{min-height:84px;border:3px solid #1b2433;border-radius:16px;background:#fff;font-weight:bold;font-size:1.25rem;padding:.4rem .6rem;line-height:1.35}
+.opts button small{display:block;font-weight:normal;font-size:.95rem;color:var(--sub)}
+.opts button.on{background:#1b2433;color:#fff}
+.opts button.on small{color:#fff}
+.gobtn{margin-top:1.2rem;width:100%;min-height:72px;font-size:1.4rem}
+/* 全体画面 */
+.pill{display:inline-block;padding:0 .6rem;border-radius:999px;background:#1b2433;color:#fff;font-weight:bold;font-size:.9rem;margin-right:.3rem;white-space:nowrap}
+.tvwrap{padding:.6rem 1rem 1rem}
+.tvtop{display:flex;flex-wrap:wrap;gap:.4rem 1rem;align-items:center;padding:.4rem 1rem;background:#fff;border-bottom:5px solid #1b2433}
+.tvtop h1{font-size:1.3rem;color:#1b2433}
+.tvtop .sp{flex:1}
+.tvtop .clk{font-size:2.2rem;color:#1b2433}
+.tvgrid{display:grid;grid-template-columns:3fr 2fr;gap:1rem;align-items:start}
+.tvbox{background:#fff;border:4px solid #1b2433;border-radius:16px;padding:.5rem .9rem;margin-bottom:.8rem}
+.tvbox .k{font-size:.9rem;color:var(--sub);font-weight:bold}
+.tvbox .v{font-size:1.7rem;font-weight:bold;line-height:1.4}
+.tvnow{background:#1d4ed8;color:#fff;border-radius:16px;padding:.5rem 1rem;margin-bottom:.8rem}
+.tvnow .k{font-size:1rem}
+.tvnow .v{font-size:2.4rem;font-weight:bold;line-height:1.3}
+.tvp{border:4px solid #cbd5e1;border-radius:14px;padding:.3rem .8rem;margin:.4rem 0;background:#fff}
+.tvp.now{border-color:#a16207;background:#fffbe6;box-shadow:0 0 0 4px #fde68a}
+.tvp .t{font-size:1.5rem;font-weight:bold}
+.phs{display:flex;flex-direction:row;gap:.4rem;flex-wrap:wrap;margin:.2rem 0}
+.phs span{flex:1 1 6em;text-align:center;border:3px solid #1b2433;border-radius:10px;padding:.1rem .3rem;font-weight:bold;font-size:1.05rem;background:#fff}
+.phs span.now{background:#facc15;border-color:#854d0e}
+.phs span.now::before{content:"いま ";font-size:.8em}
+.tvtimer .digits{font-size:clamp(3rem,9vw,7rem)}
+.tvrole .rr{font-size:1.05rem;margin:.25rem 0;line-height:1.5}
+.tvrole .pill{font-size:.85rem}
+.empty{padding:.8rem;border:3px dashed #94a3b8;border-radius:12px;color:var(--sub);font-size:1.1rem;background:#fafcff}
+/* 先生画面 */
+.tw{max-width:1100px;margin:0 auto;padding:1rem}
+.tw h2{font-size:1.35rem;color:#1b2433;border-left:8px solid #1d4ed8;padding-left:.5rem;margin:1.2rem 0 .5rem}
+.tw h3{font-size:1.1rem;margin:.7rem 0 .2rem}
+.tw p,.tw li{font-size:1rem}
+.tw ul,.tw ol{padding-left:1.4rem}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem 1rem;padding:.5rem 1rem;background:#fff;border-bottom:3px solid #1d4ed8}
+header h1{font-size:1.4rem;color:#1d4ed8;white-space:nowrap}
+header .agenda2{flex:1 1 260px;font-weight:bold}
+header .agenda2 small{display:block;font-weight:normal;color:var(--sub)}
+.hbtns{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center}
+.quote{border:2px solid #94a3b8;background:#fff;border-radius:10px;padding:.5rem .8rem;margin:.4rem 0;font-family:"BIZ UDPMincho","Yu Mincho","serif";font-size:1rem}
+.quote .src{display:block;font-family:"BIZ UDPGothic","Yu Gothic UI",sans-serif;font-size:.85rem;color:var(--sub);margin-top:.2rem}
+table.tt{border-collapse:collapse;width:100%;font-size:.95rem;background:#fff}
+table.tt th,table.tt td{border:2px solid #94a3b8;padding:.3rem .4rem;vertical-align:top;text-align:left}
+table.tt th{background:#e8eef8}
+.tblwrap{overflow-x:auto}
+.tctl{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin:.3rem 0}
+.tctl button{min-height:48px;padding:.1rem .8rem;border:3px solid #1b2433;border-radius:12px;background:#fff;font-weight:bold}
+.tctl button.on{background:#1b2433;color:#fff}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#14213d;color:#fff;padding:14px 22px;border-radius:12px;font-size:1.1rem;z-index:99;max-width:90vw;text-align:center;display:none}
+/* 印刷用（流れ表） */
+.pr{max-width:820px;margin:0 auto;padding:1rem;background:#fff}
+.pr .pbar{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.6rem}
+.pbar .btn.on{background:#1b2433;color:#fff}
+.sheet{color:#000;font-size:15pt;line-height:1.45}
+.sheet h1{font-size:20pt;margin:0 0 4pt;border-bottom:3px solid #000;padding-bottom:2pt}
+.sheet h1 .kind{font-size:12pt;font-weight:normal;margin-left:8pt;border:1.5px solid #000;padding:0 4pt}
+.sheet .meta{display:grid;grid-template-columns:auto 1fr;gap:1pt 6pt;font-size:13.5pt;margin-bottom:5pt}
+.sheet .meta b{white-space:nowrap}
+.sheet .meta span{border-bottom:1.5px solid #000;min-height:1.3em}
+.sheet ol{list-style:none;padding:0;margin:0}
+.sheet li{display:flex;gap:6pt;align-items:baseline;border-bottom:1px solid #555;padding:2pt 0}
+.sheet li .bx{flex:0 0 auto;width:13pt;height:13pt;border:2px solid #000;display:inline-block;transform:translateY(2pt)}
+.sheet li b{flex:0 0 auto;min-width:9.4em}
+.sheet li span{font-size:13pt}
+.sheet .talk{border:2.5px solid #000;border-radius:6pt;padding:3pt 6pt;margin:3pt 0}
+.sheet .talk .ph{display:flex;flex-wrap:wrap;gap:4pt 6pt;align-items:baseline;font-size:13pt;padding:1pt 0}
+.sheet .bx{flex:0 0 auto;width:12pt;height:12pt;border:2px solid #000;display:inline-block;transform:translateY(1pt)}
+.sheet .help li{display:list-item;border:0;padding:0}
+.sheet .help ul{padding-left:1.2em;margin:0}
+.sheet .help{border:2.5px solid #000;padding:3pt 6pt;margin-top:5pt;font-size:12.5pt}
+.sheet .help b{font-size:13pt}
+@media (max-width:820px){.tvgrid{grid-template-columns:1fr}}
+@media (max-width:700px){
+ .top{padding:.3rem .6rem;flex-wrap:wrap}.top h1{display:none}.top .lv{white-space:normal;font-size:.9rem}.menubtn{padding:.1rem .5rem}
+ #tabs{grid-template-columns:repeat(3,minmax(0,1fr));padding:.5rem .6rem 0}
+ #road{margin:.5rem .6rem 0}
+ main{padding:.6rem .6rem 0}
+ .navbar{padding:.4rem .6rem calc(.4rem + env(safe-area-inset-bottom))}
+ #tabs button,html.b-hi #tabs button{flex-direction:column;gap:.05rem;font-size:.86rem;white-space:nowrap}
+ html.b-lo #tabs button{font-size:.86rem;white-space:nowrap;min-height:72px}
+ .navbar{grid-template-columns:1fr 1.9fr}
+ html.b-lo .rnow .nm{font-size:1.3rem}
+ .rprev,.rnext{font-size:.82rem}
+ .rline{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ .rline .rnow{grid-column:1/3;grid-row:1}
+ .rline .rarr{display:none}
+ .rprev{text-align:left}.rnext{text-align:right}
+ .bubble{font-size:1.05rem}.chip{font-size:1.2rem}.bignow{font-size:1.5rem}
+ .prow{grid-template-columns:1fr auto}.prow .pl{grid-column:1/3}
+ .agenda{padding:.25rem .6rem}
+}
+@media (max-width:420px){.top .clk{display:none}}
+@media print{
+ @page{size:A4 portrait;margin:10mm}
+ body{background:#fff}
+ .noprint{display:none!important}
+ .pr{padding:0;max-width:none}
+ .sheet{line-height:1.36}
+ .sheet li{padding:1.5pt 0}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast"></div>
+<script>
+/*DATA-START*/
+var DATA={
+/* 子ども向けの文は、学年の段階ごとに別の文として持つ。
+   lo＝低学年（1・2年の配当漢字まで）、mid＝中学年（4年まで）、hi＝高学年（6年まで）
+   mh＝中・高学年で共通（4年までの漢字）、all＝全部で共通（2年までの漢字）
+   {漢字|よみ} はルビ、[[名前]] は準備で入れた中身に置きかわる。 */
+ui:{
+ title:{lo:'学{級|きゅう}会ナビ',mh:'学級会ナビ'},
+ bandName:{lo:{all:'{低|てい}学年'},mid:{all:'中学年'},hi:{all:'高学年'}},
+ bandSub:{lo:{all:'1・2年'},mid:{all:'3・4年'},hi:{all:'5・6年'}},
+ stepName:{1:{all:'ステップ1　はじめのころ'},2:{all:'ステップ2　なれてきたら'},3:{all:'ステップ3　じぶんたちで'}},
+ stepSub:{1:{all:'4月〜　セリフを ぜんぶ 見る'},2:{all:'9月〜　キーワードだけ 見る'},3:{all:'1月〜　見ないで できる'}},
+ chooseBand:{all:'どの学年の 学{級|きゅう}会ですか'},
+ chooseStep:{all:'いまは どの ステップですか'},
+ chooseGo:{all:'これで はじめる'},
+ chooseHint:{all:'えらんだ ものは、この 学{級|きゅう}会ナビが おぼえて おきます。'},
+ rechoose:{lo:'えらびなおす',mh:'えらびなおす'},
+ toTv:{lo:'テレビの がめん',mh:'全体画面'},
+ toTeacher:{all:'先生'},
+ gidai:{lo:'ぎだい',mh:'議題'},
+ meate:{lo:'めあて',mh:'めあて'},
+ hashira:{lo:'はなしあう こと',mh:'柱'},
+ now:{lo:'いま',mh:'いま'},
+ next:{lo:'つぎは',mh:'次は'},
+ prev:{lo:'◀ もどる',mh:'◀ もどる'},
+ go:{lo:'つぎへ ▶',mh:'次へ ▶'},
+ sayMe:{lo:'いま 言う こと',mh:'いま言うこと'},
+ sayAll:{lo:'しかいの セリフ（そのまま 読む）',mh:'司会のセリフ（そのまま読む）'},
+ sayOther:{lo:'ほかの 人が 言う こと',mh:'ほかの人が言うこと'},
+ doNow:{lo:'いま する こと',mh:'いまやること'},
+ kwHead:{lo:'キーワード（ことばは じぶんで つなげる）',mh:'キーワード（言い方は自分で考える）'},
+ openFull:{lo:'こまったら ひらく（ぜんぶの 文）',mh:'こまったら開く（全部の文）'},
+ lastResort:{lo:'どうしても こまったら ひらく',mh:'どうしてもこまったら開く'},
+ trouble:{lo:'こまった ときは',mh:'こまったときは'},
+ flowHead:{lo:'学{級|きゅう}会の ながれ',mh:'学級会の流れ'},
+ printBtn:{lo:'ながれひょうを いんさつする',mh:'流れ表を印刷する'},
+ refOpen:{lo:'見ないで できるかな。たしかめたい ときに ひらく',mh:'見ないでできるかな。たしかめたいときに開く'},
+ moreBand:{lo:'ぜんぶ 見る',mh:'全部見る'},
+ lessBand:{lo:'ちぢめる',mh:'ちぢめる'},
+ tvWait:{lo:'しかいの がめんを、 同じ パソコンで ひらいて ください。',mh:'司会の画面を、同じパソコンで開いてください。'},
+ timer:{lo:'とけい',mh:'時計'},
+ tStart:{lo:'スタート',mh:'スタート'},
+ tPause:{lo:'とめる',mh:'ストップ'},
+ tReset:{lo:'もどす',mh:'リセット'},
+ tPlus:{lo:'1分 ふやす',mh:'1分のばす'},
+ tPillar:{lo:'はなしあいの 時間',mh:'柱の時間'},
+ tOver:{lo:'時間です',mh:'時間です'},
+ tLeft:{lo:'あと 1分',mh:'あと1分'},
+ tRun:{lo:'すすんで います',mh:'進行中'},
+ tStop:{lo:'とまって います',mh:'止まっています'},
+ tReady:{lo:'スタートを おす',mh:'スタートをおす'},
+ talkWord:{lo:'はなしあい',mh:'話し合い'},
+ kirari:{lo:'キラリさん',mid:'キラリしょう',hi:'キラリ賞'},
+ stepNote:{
+  2:{lo:'ステップ2：セリフの 文が かくれて、キーワードだけに なりました。ぜんぶの 文は「こまったら ひらく」に あります。',mh:'ステップ2：セリフの全文がかくれて、キーワードだけになりました。全文は「こまったら開く」の中にあります。'},
+  3:{lo:'ステップ3：セリフと キーワードが かくれて、ながれの 見出しだけに なりました。「こまった ときは」は のこって います。',mh:'ステップ3：セリフとキーワードがかくれて、流れの見出しだけになりました。「こまったときは」は残っています。'}
+ },
+ goal:{
+  1:{lo:'めざす すがた：セリフを 読みながら、さいごまで すすめよう。',mh:'めざす{姿|すがた}：セリフを読みながら、最後まで進めよう。',hi:'めざす姿：セリフを読みながら、最後まで進めよう。'},
+  2:{lo:'めざす すがた：キーワードを 見て、じぶんの ことばで 言おう。',mh:'めざす{姿|すがた}：キーワードを見て、自分の言葉で言おう。'},
+  3:{lo:'めざす すがた：まず、ながれひょう 1まいで すすめる。つぎは、ながれひょうも 見ないで すすめる。',mh:'めざす{姿|すがた}：まず、紙1まいの流れ表だけで進める。次は、紙も見ないで進める。',hi:'めざす姿：まず、紙1枚の流れ表だけで進める。次は、紙も見ないで進める。'}
+ },
+ roles:{
+  s:{lo:'しかい',mh:'司会'},f:{lo:'ふくしかい',mh:'副司会'},k:{lo:'黒ばん書記',mh:'黒板書記'},n:{all:'ノート書記'},m:{all:'みんな'},
+  t:{lo:'ていあんした 人',mh:'{提案|ていあん}者',hi:'提案者'},g:{lo:'しかいグループ',mh:'司会グループ'},z:{lo:'みんな',mh:'全員'}
+ },
+ roleDesc:{
+  s:{lo:'すすめる 人。みんなに いけんを きく。',mh:'話し合いを進める。意見をうながす。'},
+  f:{lo:'手を あげた 人を あてる。しかいを たすける。',mh:'手をあげている人を当てる。司会を助ける。'},
+  k:{lo:'先生と いっしょに、黒ばんに 書く。',mh:'黒板に記録する。2〜3人で分けて書く。'},
+  n:{lo:'きまった ことを ノートに 書く。',mh:'学級会ノートに記録する。決まったことを発表する。'},
+  m:{lo:'手を あげて 言う。よく 聞く。',mh:'手をあげて意見を言う。よく聞いて考える。'}
+ },
+ prepTab:{lo:'じゅんび',mh:'{準備|じゅんび}',hi:'準備'}
+},
+
+/* ---------- 学級会の流れ（学年の段階ごと） ---------- */
+/* say: [話す人, 文, 条件]  話す人 s司会 f副司会 k黒板書記 n ノート書記 t提案者 g司会グループ z全員 m みんな */
+stages:{
+lo:[
+ {id:'start',n:'はじめの ことば',kw:['きりつ','はじめます','れい'],
+  say:[['s','きりつ。'],['s','これから、[[kai]]学きゅう会を はじめます。'],['s','れい。'],['s','ちゃくせき。']],
+  do:{s:['前に 立ちます。','大きな 声で 言います。'],f:['しかいの となりに 立ちます。'],k:['黒ばんの 前に 立ちます。'],n:['ノートと えんぴつを 出します。'],m:['しかいの 声に 合わせて 立ちます。','れいを します。']}},
+ {id:'mt',cond:'mt',n:'もくひょう・うた',kw:['もくひょう','うた'],
+  say:[['s','みんなで 学きゅうもくひょうを 読みましょう。','mok'],['s','みんなで「[[uta]]」を うたいましょう。','uta']],
+  do:{m:['みんなで 声を 合わせます。']}},
+ {id:'yaku',n:'やくわりの しょうかい',kw:['しかい','ふくしかい','ノート書記','黒ばん書記'],
+  say:[['s','しかいの（　　）です。'],['f','ふくしかいの（　　）です。'],['n','ノート書記の（　　）です。'],['k','黒ばん書記の（　　）です。'],['g','よろしく おねがいします。']],
+  tip:['（　）には、じぶんの 名前を 言います。'],
+  do:{s:['じぶんの 名前を 言います。'],f:['じぶんの 名前を 言います。'],k:['じぶんの 名前を 言います。'],n:['じぶんの 名前を 言います。'],m:['しかいグループの 話を 聞きます。','おわったら、はくしゅを します。']}},
+ {id:'gidai',n:'ぎだい',kw:['今日の ぎだい'],
+  say:[['s','今日の ぎだいは、「[[gidai]]」です。']],
+  do:{k:['ぎだいの カードを ゆびで さします。'],n:['ノートの ぎだいを 見ます。'],m:['黒ばんの ぎだいを 見ます。']}},
+ {id:'riyu',n:'はなしあう わけ',kw:['ていあんした 人','はなしあう わけ'],
+  say:[['s','はなしあう わけを、（　　）さん、おねがいします。'],['t','はなしあう わけは、[[riyu]]です。'],['s','わからない ことは ありませんか。']],
+  tip:['ていあんした 人：[[teian]]'],
+  do:{f:['手を あげた 人を あてます。'],m:['わけを よく 聞きます。','わからない ときは、手を あげます。']}},
+ {id:'meate',n:'めあて',kw:['めあて','はなしあう こと'],
+  say:[['s','今日の めあては、「[[meate]]」です。'],['s','もう きまって いる ことは、[[kimatte]]です。','kim'],['s','はなしあう ことは、[[hlist]]です。']],
+  do:{k:['めあての カードを ゆびで さします。'],m:['黒ばんの めあてを 見ます。']}},
+ {id:'sensei1',n:'先生の おはなし',kw:['先生','おねがいします'],
+  say:[['s','はなしあう 前に、先生の おはなしが あります。'],['s','先生、おねがいします。']],
+  do:{m:['先生の 話を 聞きます。']}},
+ {id:'talk',talk:true,n:'はなしあい'},
+ {id:'kimatta',n:'きまった こと',kw:['ノート書記','きまった こと'],
+  say:[['s','きまった ことを、ノート書記の（　　）さん、おねがいします。'],['n','きまった ことは、（　　　）です。'],['n','みんなで がんばりましょう。'],['s','まちがいは ありませんか。']],
+  do:{n:['ノートに 書いた ことを 読みます。'],k:['きまった ことに 花まるを つけます。'],m:['きまった ことを 聞きます。']}},
+ {id:'kirari',n:'キラリさん',kw:['ふくしかい','キラリさん','よかった ところ'],
+  say:[['s','キラリさんを、ふくしかいの（　　）さん、おねがいします。'],['f','今日の キラリさんは、（　　）さんです。'],['f','（　　　）ところが よかったです。']],
+  tip:['たくさん 言った 人だけで なく、よく 聞いて いた 人も えらべます。'],
+  do:{f:['よかった ところを 1つ 言います。'],m:['はくしゅを します。']}},
+ {id:'furi',n:'ふりかえり',kw:['ふりかえり','かんそう'],
+  say:[['s','ふりかえりを 書きます。'],['s','時間は [[furi]]分です。'],['s','かんそうを 言って くれる 人は いますか。']],
+  do:{f:['手を あげた 人を あてます。'],m:['ふりかえりに ◎○△を 書きます。','思った ことを 1つ 書きます。']}},
+ {id:'sensei2',n:'先生の おはなし',kw:['先生','おねがいします'],
+  say:[['s','先生、おはなしを おねがいします。']],
+  do:{m:['先生の 話を 聞きます。']}},
+ {id:'end',n:'おわりの ことば',kw:['きりつ','おわります','れい'],
+  say:[['s','きりつ。'],['s','これで、[[kai]]学きゅう会を おわります。'],['s','れい。']],
+  do:{m:['しかいの 声に 合わせて 立ちます。','れいを します。']}}
+],
+mid:[
+ {id:'start',n:'はじめの言葉',kw:['起立','始めます','礼'],
+  say:[['s','起立。'],['s','これから、[[kai]]学級会を始めます。'],['s','礼。'],['s','着席。']],
+  do:{s:['前に立ちます。','みんなの顔を見ます。','大きな声で言います。'],f:['司会のとなりに立ちます。','始まった時こくを、メモします。'],k:['黒板の前に立ちます。','たんざくが はってあるか、見ます。'],n:['学級会ノートを用意します。'],m:['司会の声で、起立します。','司会の声で、礼をします。']}},
+ {id:'mt',cond:'mt',n:'学級目標・歌',kw:['学級目標','歌'],
+  say:[['s','学級会を始める前に、みんなで学級目標を読みましょう。','mok'],['s','気持ちを一つにするために、「[[uta]]」を歌いましょう。','uta']],
+  do:{m:['みんなで声を合わせます。']}},
+ {id:'yaku',n:'役わりのしょうかい',kw:['司会','副司会','ノート書記','黒板書記'],
+  say:[['s','司会グループのしょうかいをします。'],['s','司会の（　　）です。（　　）をがんばります。'],['f','副司会の（　　）です。（　　）をがんばります。'],['n','ノート書記の（　　）です。（　　）をがんばります。'],['k','黒板書記の（　　）です。（　　）をがんばります。'],['g','よろしくお願いします。']],
+  tip:['1つ目の（　）には、自分の名前を入れます。','2つ目の（　）には、がんばることを入れます。'],
+  do:{s:['名前と、がんばることを言います。'],f:['名前と、がんばることを言います。'],k:['名前と、がんばることを言います。'],n:['名前と、がんばることを言います。'],m:['しょうかいが終わったら、はくしゅをします。']}},
+ {id:'gidai',n:'議題のたしかめ',kw:['今日の議題'],
+  say:[['s','今日の議題は、「[[gidai]]」です。']],
+  do:{k:['議題のたんざくを指さします。'],n:['ノートの議題が合っているか、見ます。'],m:['黒板の議題を見ます。']}},
+ {id:'riyu',n:'{提案|ていあん}理由',kw:['{提案|ていあん}者','{提案|ていあん}理由','{質問|しつもん}'],
+  say:[['s','{提案|ていあん}理由を、{提案|ていあん}者の（　　）さん、お願いします。'],['t','{提案|ていあん}理由は、[[riyu]]です。'],['t','しっかり話し合ってください。'],['s','{提案|ていあん}理由について、{質問|しつもん}はありませんか。']],
+  tip:['{提案|ていあん}者：[[teian]]'],
+  do:{f:['{質問|しつもん}の手をあげた人を当てます。'],m:['なぜ話し合うのかを、聞き取ります。','分からないことがあれば、手をあげます。']}},
+ {id:'meate',n:'めあてと柱',kw:['めあて','決まっていること','柱'],
+  say:[['s','今日の話し合いのめあては、「[[meate]]」です。'],['s','決まっていることは、[[kimatte]]です。','kim'],['s','今日話し合うことは、[[hlist]]です。'],['s','時間は、[[jikan]]です。','jik']],
+  do:{f:['柱の時間を、時計に入れます。'],k:['めあてと柱のたんざくを指さします。'],m:['黒板のめあてを見ます。']}},
+ {id:'sensei1',n:'先生の話',kw:['先生','お願いします'],
+  say:[['s','話し合いに入る前に、先生からお話があります。'],['s','先生、よろしくお願いします。']],
+  do:{m:['先生の話を聞きます。']}},
+ {id:'talk',talk:true,n:'話し合い'},
+ {id:'kimatta',n:'決まったことの発表',kw:['ノート書記','決まったこと','まちがい'],
+  say:[['s','今日決まったことを、ノート書記の（　　）さんに発表してもらいます。お願いします。'],['n','柱[[pn]]「[[p]]」は、（　　　）に決まりました。','each'],['n','みなさん、がんばって実行しましょう。'],['s','決まったことで、まちがいや{質問|しつもん}はありませんか。']],
+  do:{n:['ノートに書いたことを、ゆっくり読みます。'],k:['決まったことに、色チョークで丸をつけます。'],m:['決まったことを聞きます。']}},
+ {id:'kirari',n:'キラリしょう',kw:['副司会','キラリしょう','よかったところ'],
+  say:[['s','キラリしょうを、副司会の（　　）さんに発表してもらいます。'],['f','今日のキラリしょうは、（　　）さんです。'],['f','（　　　）ところが、よかったです。']],
+  tip:['たくさん発言した人だけでなく、聞き方や、意見の中身がよかった人も、えらべます。'],
+  do:{f:['よかったところを、1つ言います。'],m:['はくしゅをします。']}},
+ {id:'furi',n:'ふり返りと感想',kw:['ふり返り','◎○△','感想'],
+  say:[['s','今日の話し合いのふり返りを、学級会ノートに書いてください。'],['s','時間は[[furi]]分です。'],['s','感想を言ってくれる人は、いませんか。']],
+  do:{f:['手をあげた人を当てます。'],m:['ノートの4つの問いに、◎○△をつけます。','感想を書きます。']}},
+ {id:'sensei2',n:'先生の話',kw:['先生','お願いします'],
+  say:[['s','今日の話し合いについて、先生からお話があります。'],['s','先生、よろしくお願いします。']],
+  do:{m:['先生の話を聞きます。']}},
+ {id:'end',n:'終わりの言葉',kw:['起立','終わります','礼'],
+  say:[['s','起立。'],['s','これで、[[kai]]学級会を終わります。'],['s','礼。']],
+  do:{m:['司会の声で、起立します。','司会の声で、礼をします。']}}
+],
+hi:[
+ {id:'start',n:'はじめの言葉',kw:['起立','始めます','礼'],
+  say:[['s','起立。'],['s','これから、[[kai]]学級会を始めます。'],['s','礼。'],['s','着席。']],
+  do:{s:['前に立ちます。','みんなの顔を見ます。','大きな声で言います。'],f:['司会のとなりに立ちます。','始まった時刻をメモします。'],k:['黒板の前に立ちます。','議題・提案理由・めあて・柱の短冊が、はってあるか見ます。'],n:['学級会ノートを用意します。'],m:['司会の声で、起立します。','司会の声で、礼をします。']}},
+ {id:'mt',cond:'mt',n:'学級目標・歌',kw:['学級目標','歌'],
+  say:[['s','学級会を始める前に、みんなで学級目標を読みましょう。','mok'],['s','気持ちを一つにするために、「[[uta]]」を歌いましょう。','uta']],
+  do:{m:['みんなで声を合わせます。']}},
+ {id:'yaku',n:'役割のしょうかい',kw:['司会','副司会','ノート書記','黒板書記'],
+  say:[['s','これから、司会グループのしょうかいをします。'],['s','司会の（　　）です。（　　）をがんばります。'],['f','副司会の（　　）です。（　　）をがんばります。'],['n','ノート書記の（　　）です。（　　）をがんばります。'],['k','黒板書記の（　　）です。（　　）をがんばります。'],['g','よろしくお願いします。']],
+  tip:['1つ目の（　）には、自分の名前を入れます。','2つ目の（　）には、今日がんばることを入れます。'],
+  do:{s:['名前と、今日がんばることを言います。'],f:['名前と、今日がんばることを言います。'],k:['名前と、今日がんばることを言います。'],n:['名前と、今日がんばることを言います。'],m:['しょうかいが終わったら、はくしゅをします。']}},
+ {id:'gidai',n:'議題の確かめ',kw:['今日の議題'],
+  say:[['s','今日の議題は、「[[gidai]]」です。']],
+  do:{k:['議題の短冊を指さします。'],n:['ノートの議題が合っているか確かめます。'],m:['黒板の議題を見ます。']}},
+ {id:'riyu',n:'提案理由',kw:['提案者','提案理由','質問'],
+  say:[['s','話し合う理由を、提案者の（　　）さん、お願いします。'],['t','提案理由は、[[riyu]]です。'],['t','しっかり話し合ってください。'],['s','提案理由について、質問はありませんか。']],
+  tip:['提案者：[[teian]]'],
+  do:{f:['質問の手をあげた人を当てます。'],m:['なぜ話し合うのかを、聞き取ります。','分からないことがあれば、手をあげます。']}},
+ {id:'meate',n:'めあての確認',kw:['めあて','決まっていること'],
+  say:[['s','今日の話し合いのめあては、「[[meate]]」です。'],['s','決まっていることは、[[kimatte]]です。','kim']],
+  do:{k:['めあての短冊を指さします。'],n:['ノートに自分のめあてが書いてあるか確かめます。'],m:['めあてを見ます。','自分のめあてを思い出します。']}},
+ {id:'hashira',n:'柱の確認',kw:['話し合いの柱','時間'],
+  say:[['s','今日の話し合いの柱は、[[hlist]]です。'],['s','時間は、[[jikan]]です。','jik']],
+  do:{f:['柱の時間を、時計に入れます。'],k:['柱の短冊を指さします。'],m:['どの順に話し合うかを、黒板で見ます。']}},
+ {id:'sensei1',n:'先生の話',kw:['先生','お願いします'],
+  say:[['s','話し合いに入る前に、先生からお話があります。'],['s','先生、よろしくお願いします。']],
+  do:{m:['先生の話を聞きます。']}},
+ {id:'talk',talk:true,n:'話し合い'},
+ {id:'kimatta',n:'決まったことの発表',kw:['ノート書記','決まったこと','まちがい・質問'],
+  say:[['s','今日決まったことを、ノート書記の（　　）さんに発表してもらいます。お願いします。'],['n','柱[[pn]]「[[p]]」は、（　　　）に決まりました。','each'],['n','みなさん、がんばって実行しましょう。'],['s','決まったことで、まちがいや質問はありませんか。']],
+  do:{n:['ノートに書いたことを、ゆっくり読みます。'],k:['決まったことに、色チョークで印をつけます。'],m:['決まったことを、自分のノートと見比べます。']}},
+ {id:'kirari',n:'キラリ賞',kw:['副司会','キラリ賞','よかったところ'],
+  say:[['s','キラリ賞を、副司会の（　　）さんに発表してもらいます。'],['f','今日のキラリ賞は、（　　）さんです。'],['f','（　　　）ところが、よかったです。']],
+  tip:['たくさん発言した人だけでなく、聞き方や、意見の中身がよかった人も選べます。'],
+  do:{f:['よかったところを、具体的に1つ言います。'],m:['はくしゅをします。']}},
+ {id:'furi',n:'ふり返りの記入',kw:['ふり返り','◎○△','時間'],
+  say:[['s','今日の話し合いのふり返りを、学級会ノートに記入してください。'],['s','時間は[[furi]]分です。']],
+  do:{f:['時計で時間を計ります。'],m:['ノートの4つの問いに、◎○△をつけます。','感想を書きます。']}},
+ {id:'kansou',n:'感想発表',kw:['感想'],
+  say:[['s','今日、学級会で話し合った感想を言ってくれる人はいませんか。']],
+  do:{f:['手をあげた人を当てます。'],m:['友だちの感想を聞きます。']}},
+ {id:'sensei2',n:'先生の話',kw:['先生','お願いします'],
+  say:[['s','今日の話し合いについて、先生からお話があります。'],['s','先生、よろしくお願いします。']],
+  do:{m:['先生の話を聞きます。']}},
+ {id:'end',n:'終わりの言葉',kw:['起立','終わります','礼'],
+  say:[['s','起立。'],['s','これで、[[kai]]学級会を終わります。'],['s','礼。']],
+  do:{m:['司会の声で、起立します。','司会の声で、礼をします。']}}
+]
+},
+
+/* ---------- 話し合いの中（柱ごとにくり返す） ---------- */
+talk:{
+lo:[
+ {n:'かんがえを 出す',kw:['かんがえを 出して ください'],
+  say:[['s','はなしあう ことは、「[[p]]」です。'],['s','かんがえを 出して ください。'],['s','言いたい 人は、手を あげて ください。']],
+  do:{s:['手を あげて いる 人を 見ます。'],f:['手を あげた 人を あてます。','まだ 言って いない 人を 先に あてます。'],k:['先生と いっしょに、出た かんがえを 書きます。'],n:['出た かんがえを 書きます。'],m:['手を あげます。','あてられたら、立ちます。','かんがえを 言います。','「〜が いいです。わけは 〜だからです。」']}},
+ {n:'にて いる ものを まとめる',kw:['にて いる もの','まとめる'],
+  say:[['s','にて いる かんがえは ありますか。'],['s','（　　）と（　　）は、にて いますか。'],['s','にて いる ものを まとめます。']],
+  do:{f:['手を あげた 人を あてます。'],k:['にて いる ものを 線で かこみます。'],n:['まとめた ものを 書きます。'],m:['にて いると 思ったら、手を あげます。']}},
+ {n:'きめる',kw:['きめて いいですか'],
+  say:[['s','（　　）に きめて いいですか。'],['z','いいです。（はくしゅ）'],['s','では、（　　）に きめます。']],
+  do:{k:['きまった ことに 花まるを つけます。'],n:['きまった ことを ノートに 書きます。'],m:['いいと 思ったら、はくしゅを します。','いやな ときは、手を あげます。']},
+  cards:[{h:'きめる ときの やくそく',items:['みんなの かんがえを 出してから きめます。','にて いる ものは まとめます。','きまらない ときは、先生に そうだんします。','きまった ことは、みんなで まもります。']}]}
+],
+mid:[
+ {n:'出し合う',kw:['柱[[pn]]','意見をお願いします'],
+  say:[['s','では、柱[[pn]]「[[p]]」について話し合います。','p1'],['s','次に、柱[[pn]]「[[p]]」について話し合います。','p2'],['s','意見をお願いします。']],
+  do:{s:['手をあげている人を見ます。','みんなに意見をうながします。'],f:['手をあげた人を当てます。','まだ発言していない人を、先に当てます。','発言した人に、{座席|ざせき}表で印をつけます。'],k:['出た意見を、短く書きます。','にている意見は、近くに書きます。'],n:['おもな意見を、ノートに書きます。'],m:['自分の考えを、理由をつけて言います。','「わたしは〜がいいと思います。理由は〜だからです。」']}},
+ {n:'くらべ合う',kw:['くらべ合う','{賛成|さんせい}・つけたし・反対'],
+  say:[['s','今から、意見をくらべ合いましょう。'],['s','今までの意見に、{賛成|さんせい}の意見や、つけたしの意見、反対の意見はありませんか。'],['s','（　　）の意見に{賛成|さんせい}の人で、ほかに理由はありませんか。'],['s','（　　）の意見に反対の人で、ほかに理由はありませんか。']],
+  do:{f:['同じ人ばかりにならないように当てます。'],k:['{賛成|さんせい}には○（赤）、反対には△（青）をつけます。'],n:['{賛成|さんせい}と反対の、おもな理由を書きます。'],m:['{賛成|さんせい}か反対かを、先に言います。','そのあとで、理由を言います。']},
+  cards:[{h:'くらべ合うときのポイント',items:['「（　）さんは〜と言いましたが、それに関連して何かありませんか。」','「（　）さんは〜に{賛成|さんせい}という意見でしたが、ほかに{賛成|さんせい}の意見はありませんか。」','「まだ（　）には意見が出ていませんが、何かありませんか。」','なるべく{賛成|さんせい}の意見から出し合います。','反対の意見ばかりにならないようにします。']}]},
+ {n:'まとめる',kw:['合わせる','決めてもいいですか'],
+  say:[['s','それでは、柱[[pn]]について決めていきます。'],['s','ここまでの意見をまとめると、（　　）なので、（　　）に決めてもいいですか。'],['z','（はくしゅ・へんじ）'],['s','では、（　　）に決めます。']],
+  do:{k:['決まったことを、黒板の左に書きます。'],n:['決まったことを、ノートに書きます。'],m:['いいと思ったら、はくしゅをします。','なっとくできないときは、手をあげます。']},
+  cards:[{h:'決め方',items:['二つの意見のよいところを合わせた案を考えます。「両方のいいところを合わせて、〜でどうですか。」','自分とちがう意見に決まっても、気持ちよく協力します。','ほとんどの人が同じ意見のときは、「ほかの考えの人はいませんか。」と聞いてから決めます。','どうしても決まらないときは、「どうやって決めるといいと思いますか。」とみんなに聞きます。多数決は、そのあとにします。']}]}
+],
+hi:[
+ {n:'出し合う',kw:['柱[[pn]]','意見をお願いします'],
+  say:[['s','では、柱[[pn]]「[[p]]」について話し合います。','p1'],['s','次に、柱[[pn]]「[[p]]」について話し合います。','p2'],['s','意見をお願いします。']],
+  do:{s:['意見が出たら、「ほかにありませんか。」とうながします。'],f:['手をあげた人を当てます。','まだ発言していない人を、先に当てます。','発言した人に、座席表で印をつけます。'],k:['出た意見を、短い言葉で書きます。','似ている意見は、近くに書きます。'],n:['主な意見を、だれの意見か分かるように書きます。'],m:['自分の考えを、理由をつけて言います。','「わたしは〜がよいと思います。理由は〜だからです。」']}},
+ {n:'比べ合う',kw:['比べ合う','賛成・つけたし・反対'],
+  say:[['s','それでは、今から意見を比べ合いましょう。'],['s','今までの意見に、賛成の意見や、つけたしの意見、または反対の意見はありませんか。'],['s','（　　）の意見に賛成の人で、ほかに理由はありませんか。'],['s','（　　）の意見に反対の人で、ほかに理由はありませんか。']],
+  do:{f:['同じ人ばかりにならないように当てます。'],k:['賛成には○（赤）、反対には△（青）をつけます。','つけたしは、その意見の横に書きます。'],n:['賛成と反対の、主な理由を書きます。'],m:['賛成か反対かを、先にはっきり言います。','そのあとで、理由を言います。','相手の考えのよいところを見つけます。']},
+  cards:[{h:'比べ合うときのポイント',items:['「（　）さんは〜と言いましたが、関連して何かありませんか。」','（賛成案が出たとき）「（　）さんは〜に賛成という意見でしたが、ほかに賛成の意見はありませんか。」','（まだ意見が出ていないものがあるとき）「まだ（　）に対して意見が出ていませんが、何かありませんか。」','（合わせる・けずる・別の意見が出たとき）「（　）という意見に対して、みなさんどうですか。」']},
+         {h:'比べる段階のコツ',items:['なるべく賛成の意見から出し合います。','賛成・反対だけを言う「意見発表会」や、反対意見ばかりの「消去法」にならないようにします。','「自分もよく、相手もよい」と思えることを話し合います。']}]},
+ {n:'まとめる（決める）',kw:['まとめると','決めてもいいですか'],
+  say:[['s','それでは、柱[[pn]]について決めていきます。'],['s','ここまでのみなさんの意見をまとめると、（　　）なので、（　　）に決定してもいいですか。'],['z','（はくしゅ・返事）'],['s','では、（　　）に決めます。']],
+  tip:['なっとくしていない人がいるときは、もう少し話し合います。'],
+  do:{k:['合わせた案や、決まったことを、黒板の左に書きます。'],n:['決まったことを、ノートに書きます。'],m:['いいと思ったら、はくしゅで伝えます。','なっとくできないときは、手をあげます。']},
+  cards:[{h:'折り合いのつけ方',items:['合わせる：「両方のいいところを合わせて、〜でどうですか。」','けずる・加える：「〜の部分を変えれば、反対の人もなっとくできますか。」','順番にする：「今回は〜、次は〜にしてはどうですか。」','条件をつける：「〜のときだけ、〜にしてはどうですか。」']},
+         {h:'決めるときに大切にすること',items:['多数決の前に、話し合いをつくします。','少数の意見にも、よいところがないかを考えます。','提案理由とめあてに合っているかで考えます。','友だちの考えのよさに気づいたら、自分の考えを変えてもよいです。','自分とちがう意見に決まっても、気持ちよく協力します。']},
+         {h:'ほとんどの人が同じ意見のとき',items:['「みんなの意見をまとめると、（　）がいいという人がほとんどのようです。」','「ほかの考えの人はいませんか。」','「（　）に決めてもいいですか。」','「では、（　）に決めます。」']},
+         {h:'意見が二つに分かれたとき（多数決の手順）',items:['「今、AとBの二つに意見が分かれています。どうやって決めるといいと思いますか。」','（フロア）「多数決がいいと思います。」','「多数決に反対の人はいますか。」','（いなければ）「では、多数決をとります。」','「多数決の結果、（　）に決まりました。」']}]}
+]
+},
+
+/* 役割ごとに、とくにすることがない段階で出す文 */
+idle:{
+ lo:{s:['つぎに 言う ことを 見て おきます。'],f:['しかいの となりで 聞きます。'],k:['黒ばんの 前で 聞きます。'],n:['だいじな ことを 書きます。'],m:['話して いる 人の 方を 見ます。']},
+ mh:{s:['次に言うことを、たしかめておきます。'],f:['司会のとなりで、時計を見ます。'],k:['書く用意をします。'],n:['大事なことを書きます。'],m:['話している人の方を見ます。']}
+},
+
+/* ---------- こまったときは ---------- */
+trouble:{
+ s:{lo:[['いけんが 出ない',['「となりの 人と はなして ください。」と 言います。','1分 まちます。']],['はなしが それた',['「今日の ぎだいは 〜です。」と 言います。']],['きまらない',['先生に そうだんします。']],['声が 出ない',['ふくしかいに 手つだって もらいます。']]],
+    mid:[['意見が出ない',['「意見が出ないようなので、近くの人と（　）分間相談してください。」と言います。','「たとえば〜の場合はどうですか。」と聞きます。']],['話がそれた',['「今は、柱（　）について話し合っています。」と言います。','議題とめあてを、もう一度読みます。']],['同じ人ばかり発言する',['「まだ発言していない人は、いませんか。」と聞きます。','副司会に、まだの人を教えてもらいます。']],['意見が分かれて決まらない',['「両方のいいところを合わせられませんか。」と聞きます。','「どうやって決めるといいと思いますか。」と、みんなに聞きます。','{提案|ていあん}理由にもどって考えます。','時間が来たら、先生に相談します。']],['ひやかし・やじが出た',['「話し合いのやくそくを守りましょう。」と言います。']],['時間が足りない',['「あと（　）分です。」と言います。','決まらない柱は、次の学級会にします。']]],
+    hi:[['意見が出ない',['「意見が出ないようなので、近くの人と（　）分間相談してください。」と言います。','「たとえば〜の場合はどうですか。」と聞きます。']],['話がそれた',['「今は、柱（　）について話し合っています。」と言います。','議題とめあてを、もう一度読みます。']],['同じ人ばかり発言する',['「まだ発言していない人は、いませんか。」と聞きます。','副司会に、まだの人を教えてもらいます。']],['意見が分かれて決まらない',['折り合いの案（合わせる・けずる・順番・条件）を、みんなに聞きます。','「どうやって決めるといいと思いますか。」と、みんなに聞きます。','それでも決まらなければ、次の学級会に持ちこします。','先生への相談は、最後にします。']],['ひやかし・やじが出た',['「話し合いのやくそくを守りましょう。」と言います。']],['時間が足りない',['「あと（　）分です。」と言います。','決まらない柱は、次の学級会にします。']]]},
+ f:{lo:[['しかいが こまって いる',['つぎに 言う ことを、小さな 声で 教えます。']],['手が あがらない',['「となりの 人と はなして みよう。」と、しかいに 言います。']]],
+    mh:[['司会がこまっている',['次に言うことを、小さな声で教えます。','「近くの人と相談する時間をとったら？」と言います。']],['時間がおしている',['「そろそろ次の柱に入ったほうがいいよ。」と、司会に伝えます。']],['だれを当てるか、まよう',['まだ発言していない人を、司会に教えます。','はじめて手をあげた人を、先にします。']]]},
+ k:{lo:[['書くのが おいつかない',['みじかく 書きます。','先生に 手つだって もらいます。']]],
+    mh:[['書くのがおいつかない',['意見を、短い言葉にして書きます。','もう1人の黒板書記と、分けて書きます。','「もう一度言ってください。」とたのみます。']],['黒板がいっぱい',['にている意見を、まとめて書きます。','終わった柱は、決まったことだけ残します。']]]},
+ n:{lo:[['聞きのがした',['黒ばんを 見ます。','「もう 1かい 言って ください。」と 言います。']]],
+    mh:[['聞きのがした',['黒板を見ます。','終わったあとで、黒板書記に聞きます。']],['発表で、何を言うか分からない',['この画面の「決まったことの発表」を見ます。']]]},
+ m:{lo:[['手を あげにくい',['となりの 人に 先に 話して みます。','「にて いますが」と 言っても いいです。']],['話が わからない',['「もう いちど 言って ください。」と 言います。']]],
+    mh:[['手をあげにくい',['となりの人に、先に話してみます。','「にていますが」「つけたしで」から始めてもいいです。']],['話が分からない',['「もう一度言ってください。」と言います。','「〜のところを、くわしく教えてください。」と言います。']]]}
+},
+
+/* ---------- 副司会 ---------- */
+fuku:{
+ ate:{h:{lo:'あてかたの コツ',mh:'当て方のコツ'},
+  lo:['まだ 言って いない 人を 先に あてます。','同じ 人ばかりに ならないように します。','はじめて 手を あげた 人は、先に あてます。'],
+  mh:['まだ発言していない人を、先に当てます。','同じ人ばかりにならないようにします。','はじめて手をあげた人がいたら、先に当てます。','教室の前・後ろ・右・左から、かたよらないように当てます。','{座席|ざせき}表に、発言した人の印をつけます。'],
+  hi:['まだ発言していない人を、先に当てます。','同じ人ばかりにならないようにします。','はじめて手をあげた人がいたら、先に当てます。','教室の前・後ろ・右・左から、かたよらないように当てます。','座席表に、発言した人の印をつけます。','だれを当てるか迷ったら、まだあまり発言していない人を、司会に教えます。']},
+ help:{h:{lo:'しかいの たすけかた',mh:'司会がこまったときの助け方'},
+  lo:['つぎに 言う ことを、小さな 声で 教えます。','のこりの 時間を、しかいに 教えます。'],
+  mh:['次に言うことを、小さな声で教えます。','「近くの人と相談する時間をとったら？」と言います。','「そろそろ次の柱に入ったほうがいいよ。」と、時間を伝えます。','話がそれたら、「議題にもどろう。」と伝えます。']},
+ kira:{h:{lo:'キラリさんの えらびかた',mid:'キラリしょうのえらび方',hi:'キラリ賞の選び方'},
+  lo:['よく 聞いて いた 人も えらべます。','わけを つけて 言った 人も えらべます。','いつも 同じ 人に ならないように します。'],
+  mh:['たくさん発言した人だけでなく、聞き方や、意見の中身がよかった人もえらびます。','たとえば：理由が分かりやすかった／友だちの意見につなげた／合わせる案を出した／うなずきながら聞いていた。','いつも同じ人にならないようにします。','よかったところを、くわしく言います。'],
+  hi:['たくさん発言した人だけでなく、聞き方や、意見の中身がよかった人も選びます。','例：理由が分かりやすかった／友だちの意見につなげた／折り合いをつける案を出した／少数の意見を大切にした／うなずきながら聞いていた。','いつも同じ人にならないようにします。','よかったところを、具体的に言います。']}
+},
+
+/* ---------- 黒板書記 ---------- */
+koku:{
+ kata:{h:{lo:'黒ばんの 書きかた',mh:'黒板の書き方の{型|かた}'},
+  lo:['右に、ぎだいと めあての カードを はります。','まん中に、みんなの かんがえを 書きます。','にて いる ものは、線で かこみます。','左に、きまった ことを 書きます。'],
+  mh:['右に、議題・{提案|ていあん}理由・めあて・柱のたんざくをはります。','その左に「出し合う → くらべ合う → まとめる」のふだをはります。いま話し合っているところに「今ここ」をつけます。','出た意見を、短く書きます。全部書かなくてもいいです。','{賛成|さんせい}には○（赤）、反対には△（青）をつけます。','いちばん左に、決まったことを書きます。','見出しは、色チョークで目立たせます。'],
+  hi:['右に、議題・提案理由・めあて・柱の短冊をはります。','その左に「出し合う → 比べ合う → まとめる」のふだをはります。いま話し合っている段階に「今ここ」をつけます。','出た意見を、短い言葉で書きます。全部書く必要はありません。','賛成には○（赤）、反対には△（青）をつけます。','似ている意見は、線でつなぎます。','合わせた案は、わくで囲みます。','いちばん左に、決まったことを書きます。','見出しは、色チョークで目立たせます。']},
+ share:{h:{lo:'2人で 書く とき',mh:'{分担|ぶんたん}の例'},
+  lo:[['1人目','ぎだい・めあての カードを はる。きまった ことを 書く。'],['2人目','先生と いっしょに、みんなの かんがえを 書く。']],
+  mh:[['3人のとき　右の人','たんざくをはる。「今ここ」のふだを動かす。'],['3人のとき　中の人','出された意見を書く。'],['3人のとき　左の人','○△をつける。合わせた案と、決まったことを書く。'],['2人のとき','1人目が右と左、2人目が中を書く。']],
+  hi:[['3人のとき　右の人','短冊をはる。「今ここ」のふだを動かす。'],['3人のとき　中の人','出された意見を書く。'],['3人のとき　左の人','○△をつける。合わせた案と、決まったことを書く。'],['2人のとき','1人目が右と左、2人目が中を書く。'],['柱が2つ以上のとき','黒板を上と下に分けるか、決まったことだけ残して書きかえます。']]},
+ pre:{h:{lo:'前の 日に する こと',mh:'前の日までにすること'},
+  lo:['先生と いっしょに、ぎだいと めあての カードを 書きます。'],
+  mh:['議題・{提案|ていあん}理由・めあて・柱を、たんざくに書いておきます。','「出し合う」「くらべ合う」「まとめる」「今ここ」のふだを、用意します。'],
+  hi:['議題・提案理由・めあて・柱を、短冊に書いておきます。','「出し合う」「比べ合う」「まとめる」「今ここ」のふだを用意します。']},
+ lab:{
+  cards:{lo:'カード',mh:'たんざく',hi:'短冊'},
+  talk:{lo:'みんなの かんがえ',mh:'意見'},
+  kimatta:{lo:'きまった こと',mh:'決まったこと'},
+  kai:{lo:'学きゅう会',mh:'学級会'},
+  riyu:{lo:'わけ',mh:'{提案|ていあん}理由',hi:'提案理由'},
+  ex1:{lo:'〜が いい',mh:'〜がいい'},
+  ex2:{lo:'〜も いい',mh:'〜もいい'},
+  ex3:{lo:'〜を したい',mh:'〜を合わせる'},
+  boardNote:{lo:'黒ばんの れい（いまの ところが 光ります）',mh:'黒板の見取り図（いまのところが光ります）'}
+ },
+ phases:{lo:['かんがえを 出す','にて いる ものを まとめる','きめる'],mid:['出し合う','くらべ合う','まとめる'],hi:['出し合う','比べ合う','まとめる']}
+},
+
+/* ---------- ノート書記 ---------- */
+note:{
+ write:{h:{lo:'ノートに 書く こと',mh:'学級会ノートに書くこと'},
+  lo:['ぎだい','きまった こと','だれが どんな ことを 言ったか（みじかく）'],
+  mh:['議題・{提案|ていあん}理由・めあて（前の日までに書いておく）','柱と時間','おもな意見の要点（だれの意見か ＋ 短く）','決まったこと（柱ごとに）'],
+  hi:['議題・提案理由・めあて（前の日までに書いておく）','柱と時間','主な意見の要点（だれの意見か ＋ 短く）','決まったこと（柱ごとに）']},
+ tips:{h:{lo:'書きかたの コツ',mh:'書き方のコツ'},
+  lo:['ぜんぶ 書かなくて いいです。','きまった ことは、かならず 書きます。'],
+  mh:['全部は書きません。大事なところだけ書きます。','だれの意見かを、短く書きます。（例：3番「〜がいい」）','決まったことは、かならず書きます。','聞きのがしたら、黒板を見ます。'],
+  hi:['全部は書きません。要点だけ書きます。','だれの意見かを、短く書きます。（例：3番「〜がよい。理由は〜」）','決まったことは、必ず書きます。','聞きのがしたら、黒板を見ます。']},
+ furi:{h:{lo:'ふりかえり（みんなが 書く）',mh:'ふり返り（全員が書く）'},
+  lo:['よく 聞けましたか。　◎　○　△','じぶんの かんがえを 言えましたか。　◎　○　△'],
+  mh:['{提案|ていあん}理由やめあてを考えて、話し合うことができましたか。　◎　○　△','友だちの考えを、しっかり聞きましたか。　◎　○　△','自分の考えを、発言することができましたか。　◎　○　△','自分のめあては守れましたか。　◎　○　△'],
+  hi:['提案理由やめあてを考えて、話し合うことができましたか。　◎　○　△','友だちの考えを、しっかり聞きましたか。　◎　○　△','自分の考えを、発言することができましたか。　◎　○　△','自分のめあては守れましたか。　◎　○　△']},
+ pres:{h:{lo:'きまった ことの はっぴょう',mh:'決まったことの発表'}}
+},
+
+/* ---------- みんな（フロアの人） ---------- */
+minna:{
+ basic:{lo:'手を あげます。あてられたら、立ちます。さいごまで 言います。',mh:'大切なことは3つです。必ず手をあげます。指名されてから話します。はっきりと、最後まで話します。'},
+ basic2:{lo:'「〜が いいです。わけは 〜だからです。」と 言います。',mh:'はじめに、{賛成|さんせい}か反対かを言います。次に、理由を言います。',hi:'はじめに、賛成か反対かを言います。次に、理由を言います。'},
+ kataH:{lo:'話しかたの れい',mh:'話し方の{型|かた}'},
+ kata:{
+  lo:[['かんがえと わけ','「〜が いいです。わけは 〜だからです。」'],['同じ かんがえ','「（　）さんと 同じで、〜です。」'],['聞こえない とき','「もう いちど 言って ください。」']],
+  mid:[['{質問|しつもん}','「〜のところを、もう一度言ってください。」'],['{賛成|さんせい}','「（　）さんの意見に{賛成|さんせい}です。わたしも〜と思うからです。」'],['反対','「（　）さんの意見に反対です。〜だからです。」'],['つけたし','「（　）さんにつけたしで、〜と思います。」'],['にている','「（　）さんと同じ考えですが、〜がちがいます。」'],['まとめ','「みんなの意見をまとめると、〜ということになると思います。」'],['こまったときの{提案|ていあん}','「司会さん、〜にしたらどうですか。」「両方のいいところを合わせて、〜でどうですか。」']],
+  hi:[['質問','「〜のところを、もう一度言ってください。」（聞こえなかったので／分かりやすく／理由をつけて）'],['賛成','「（　）さんの意見に賛成です。わたしも同じように〜と思うからです。」'],['反対','「（　）さんの意見に反対です。〜だからです。」'],['つけたし','「（　）さんにつけたしで、〜と思います。」「（　）さんの言ったことに関係して、〜ということもあります。」'],['似ている','「（　）さんと同じ考えですが、〜（理由・方法）がちがいます。」'],['まとめ','「みんなの意見をまとめると、〜ということになると思います。」'],['こまったときの提案','「〜という考えもあると思います。」「司会者さん、〜にしたらどうですか。」「両方のいいところを合わせて、〜でどうですか。」']]},
+ kikiH:{lo:'聞きかた',mh:'聞き方'},
+ kiki:{lo:['話す 人の 方を 見ます。','さいごまで 聞きます。','聞く ときは、「同じだ」「ちがう」と 考えます。'],
+  mh:['聞くときは、自分の考えとくらべます。','「わたしの考えと同じだ。」「わたしの考えとはちがう。」','「どうして〜なんだろう。」','「〜までは同じだけれど、そのあとがちがう。」','「にているけれど、理由がちがう。」'],
+  hi:['聞くときは、自分の考えと比べます。','「わたしの考えと同じだ。」「わたしの考えとはちがう。」','「どうして〜なんだろう。」','「〜までは同じだけれど、そのあとがちがう。」','「わたしの考えと似ているけれど、理由がちがう。」']},
+ yakuH:{lo:'やくそく',mh:'話し合いのやくそく'},
+ yaku:{lo:['友だちの 話は、さいごまで 聞きます。','ひやかしや やじは 言いません。','手を あげないで 話しません。'],
+  mh:['友だちの話は、最後まで聞きます。「ひやかし」「やじ」は、ぜったいにしません。','自分の考えを、進んで発表します。','近くの人とのひそひそ話や、手をあげないで話すことは、しません。','{賛成|さんせい}だと思ったら、はくしゅで伝えてもいいです。'],
+  hi:['友だちの話は、最後まで聞きます。「ひやかし」「やじ」は、絶対にしません。','自分の考えを、進んで発表します。','近くの人とのひそひそ話や、手をあげないで発言することは、しません。','賛成だと思ったら、はくしゅで気持ちを表してもいいです。']},
+ jukkajoH:{lo:'話し合いの 3つの やくそく',mh:'話し合いの10か{条|じょう}'},
+ jukkajo:{
+  lo:['思った ことは、そのまま 言って みよう。','みんなに 聞こえる 声で 話そう。','ちがう かんがえも 大切に しよう。'],
+  mid:['友だちの話は、何を言いたいのかを考えながら、最後まで聞こう。','みんなに聞こえる声で、分かるように話そう。','思ったことは、まちがっているかなと思っても、話してみよう。','分からない友だちには、自分の分かり方を教えよう。','分からないときは、分かるまで何度も聞こう。','人をばかにしたり、笑ったり、ひやかしたりしない。','友だちの考えを受け止めてから、自分の考えをまとめよう。','だれが言ったかではなく、何を言ったかをよく聞こう。','自分の考えだけを、おし通そうとしない。','ちがう考えも、大切にしよう。'],
+  hi:['友だちの話を聞くときは、何を言いたいのか分かろうと、最後までしっかり聞きましょう。聞くことは、心をつなぐことです。','言いたいことを、みんなに聞こえる声で、みんなが分かるように伝えましょう。伝わる声や話し方を意識することは、思いやりの第一歩です。','感じたこと、思ったこと、考えたことは、まちがっているかなと思っても、そのまま話しましょう。考えを主張することは、自分自身を大切にすることでもあります。','分からない友だちには、自分の分かり方を説明しましょう。説明すると、それが自分の力になります。','分からないときは、分かるまで何度も聞きましょう。学ぶとは、疑問に思い、それを問うことです。','人をばかにしたり、笑ったり、ひやかしたり、無視したりすることはやめましょう。相手を大切にすることは、人権を尊重する第一歩です。','友だちの話をよく受け止めてから、自分の考えを整理したり、まとめたりしましょう。話し合いは「聞き合い」だからです。','話している人がだれかではなく、話の中身をよく聞いて、考え、判断しましょう。人の考えを生かすからこそ、よりよい結論が見つかります。','自分の考えにこだわりすぎたり、無理におし通そうとしたりしないようにしましょう。分かり合うことや折り合いをつけることは、ともに生きていく第一歩です。','ちがう考えや、異なる意見をできるだけ大切にしましょう。ちがいを大事にするからこそ、新しい考えが生まれます。いじめのない学級は、ちがいを認め合うことから始まります。']}
+},
+
+/* ---------- 準備 ---------- */
+prep:{
+ head:{lo:'学きゅう会の じゅんび',mh:'学級会の{準備|じゅんび}（司会グループ・計画委員会）',hi:'学級会の準備（司会グループ・計画委員会）'},
+ lead:{lo:'先生と いっしょに 書きます。書いた ことは、しかいの セリフに 入ります。',mh:'ここに書いたことが、司会のセリフの（　）に自動で入ります。',hi:'ここに書いたことが、司会のセリフの（　）に自動で入ります。'},
+ noName:{lo:'人の 名前は 書きません。ばんごうで 書きます。',mh:'人の名前は書きません。番号や{班|はん}で書きます。',hi:'人の名前は書きません。番号や班で書きます。'},
+ kai:{lo:'なんかいめ',mh:'第何回'},
+ gidai:{lo:'ぎだい（はなしあう こと）',mh:'議題'},
+ teian:{lo:'ていあんした 人（ばんごう）',mh:'{提案|ていあん}者（番号か{班|はん}）',hi:'提案者（番号か班）'},
+ riyu:{lo:'はなしあう わけ',mh:'{提案|ていあん}理由',hi:'提案理由'},
+ meate:{lo:'めあて',mh:'話し合いのめあて'},
+ hashira:{lo:'はなしあう こと',mh:'柱（話し合うこと）'},
+ hashiraNote:{lo:'はなしあう ことは 1つです。',mid:'柱は2つまでです。',hi:'柱は3つまでです。'},
+ min:{lo:'分',mh:'分'},
+ total:{lo:'あわせて',mh:'合計'},
+ kimatte:{lo:'もう きまって いる こと',mh:'決まっていること'},
+ kimatteEx:{lo:'れい：12月15日に する',mh:'例：12月15日の5時間目に行う'},
+ opt:{lo:'やる ことを えらぶ',mh:'はじめにすること'},
+ mok:{lo:'学きゅうもくひょうを 読む',mh:'学級目標を読む'},
+ uta:{lo:'うたを うたう',mh:'歌を歌う'},
+ utaName:{lo:'うたの 名前',mh:'歌の名前'},
+ jokenH:{lo:'ぎだいの 3つの やくそく',mh:'議題カードの3つのチェック'},
+ joken:{lo:['学きゅうが たのしく なる こと？','みんなに かんけいが ある こと？','じぶんたちで できる こと？'],
+  mh:['学級が楽しく{豊|ゆた}かになる問題ですか。','学級の全員に関係のある問題ですか。','自分たちの力で{解決|かいけつ}できる問題ですか。'],
+  hi:['学級が楽しく豊かになる問題ですか。','学級の全員に関係のある問題ですか。','自分たちの力で解決できる問題ですか。']},
+ jokenOK:{lo:'3つとも 〇。この ぎだいで はなしあえます。',mh:'3つとも〇。この議題で話し合えます。'},
+ jokenNG:{lo:'〇が つかない ときは、先生に そうだんします。',mh:'〇がつかないものがあるときは、先生に相談します。'},
+ linkH:{lo:'ほかの パソコンでも 同じに する',mh:'ほかのパソコンやタブレットでも同じ画面にする'},
+ linkLead:{lo:'この リンクを ひらくと、書いた ことが 入った がめんに なります。',mh:'このリンクを開くと、書いたことが入った画面が開きます。'},
+ linkBtn:{lo:'リンクを コピーする',mh:'リンクをコピーする'},
+ linkDone:{lo:'コピーしました',mh:'コピーしました'},
+ linkFail:{lo:'下の リンクを えらんで、コピーして ください。',mh:'下のリンクをえらんで、コピーしてください。'},
+ clear:{lo:'書いた ことを ぜんぶ けす',mh:'書いたことを全部消す'},
+ clearAsk:{lo:'ほんとうに けしますか。',mh:'本当に消しますか。'},
+ yes:{lo:'けす',mh:'消す'},
+ no:{lo:'やめる',mh:'やめる'},
+ schedH:{lo:'学きゅう会までの ながれ',mh:'学級会までの流れ'},
+ sched:{lo:['先生と いっしょに、ぎだいを きめる。','やくわりを きめる。','学きゅう会を する。','きまった ことを やって みる。'],
+  mh:['月　議題を整理する。議題を決める。','火　役わりを分ける。話し合いの流れを考える。学級会ノートを作る。','水　学級会のお知らせをする。学級会ノートを配る。','木　計画をたしかめる。計画を直す。','金　学級会','そのあと　決まったことをやってみる。ふり返る。'],
+  hi:['月　議題を整理する。議題を決める。','火　役割を分担する。話し合いの流れを考える。学級会ノートを作る。','水　学級会を予告する。学級会ノートを配る。','木　計画を確認する。計画を修正する。','金　学級会','そのあと　決まったことを実行する。ふり返る。']}
+},
+
+/* ---------- 流れ表（印刷） ---------- */
+print:{
+ title:{lo:'学きゅう会 ながれひょう',mh:'学級会 流れ表'},
+ help:{lo:'こまったら',mh:'こまったら'},
+ helpItems:{lo:['いけんが 出ない → となりの 人と はなす','はなしが それた → ぎだいを もう いちど 読む','きまらない → 先生に そうだんする'],
+  mh:['意見が出ない → 「近くの人と（　）分間相談してください」','話がそれた → 議題とめあてを、もう一度読む','決まらない → 両方のよいところを合わせる → それでもだめなら、決め方をみんなに聞く'],
+  hi:['意見が出ない → 「近くの人と（　）分間相談してください」','話がそれた → 議題とめあてにもどる','決まらない → 折り合いの案（合わせる・けずる・順番・条件）→ 決め方をみんなに聞く（多数決は最後）']},
+ back:{lo:'もどる',mh:'もどる'},
+ doPrint:{lo:'いんさつする',mh:'印刷する'},
+ tip:{lo:'A4の 紙 1まいに 入ります。',mh:'A4の紙1まいに入ります。',hi:'A4の紙1枚に入ります。'}
+}
+};
+/* ---------- 追加（検品の直し） ---------- */
+DATA.ui.closeNote={lo:'とじる',mh:'とじる'};
+DATA.ui.kwNest={lo:'キーワードを 見る',mh:'キーワードを見る'};
+DATA.ui.fullNest={lo:'ぜんぶの 文を 見る',mh:'全部の文を見る'};
+DATA.ui.printKw={lo:'ながれひょう（キーワードつき）',mh:'流れ表（キーワードつき）'};
+DATA.ui.printHead={lo:'ながれひょう（見出しだけ）',mh:'流れ表（見出しだけ）'};
+DATA.ui.tvRole={lo:'いま する こと',mh:'いまやること'};
+DATA.ui.goal[3].lo='めざす すがた：まず、ながれひょう 1まいで すすめる。つぎは、ながれひょうも 見ないで すすめる。';
+/* 「先生の話」を柱ごとに入れるとき、柱2・柱3の前に出る段階 */
+DATA.talkSensei={
+ lo:{n:'先生の おはなし',kw:['先生','おねがいします'],say:[['s','つぎの ことを はなしあう 前に、先生の おはなしが あります。'],['s','先生、おねがいします。']],do:{m:['先生の 話を 聞きます。']}},
+ mid:{n:'先生の話',kw:['先生','お願いします'],say:[['s','柱[[pn]]について話し合う前に、先生からお話があります。'],['s','先生、よろしくお願いします。']],do:{m:['先生の話を聞きます。']}},
+ hi:{n:'先生の話',kw:['先生','お願いします'],say:[['s','柱[[pn]]について話し合う前に、先生からお話があります。'],['s','先生、よろしくお願いします。']],do:{m:['先生の話を聞きます。']}}
+};
+/* 黒板書記：段階ごと・人ごとにすること（中・高学年）。[短く, くわしく] */
+DATA.koku.posH={mh:'1人ずつ、いまやること'};
+DATA.koku.pos={mh:['右の人','中の人','左の人']};
+DATA.koku.who={
+ mid:[
+  [['今ここをはる','「今ここ」を「出し合う」にはります。'],['意見を書く','出た意見を、短く書きます。'],['中を手つだう','意見が多いときは、中の人と分けて書きます。']],
+  [['今ここを動かす','「今ここ」を「くらべ合う」に動かします。'],['つけたしを書く','つけたしの意見を、その意見の横に書きます。'],['○△をつける','{賛成|さんせい}に○（赤）、反対に△（青）をつけます。']],
+  [['今ここを動かす','「今ここ」を「まとめる」に動かします。'],['意見をつなぐ','合わせた案のもとの意見を、線でつなぎます。'],['決まったことを書く','合わせた案と、決まったことを書きます。']]
+ ],
+ hi:[
+  [['今ここをはる','「今ここ」を「出し合う」にはります。'],['意見を書く','出た意見を、短い言葉で書きます。'],['中を手伝う','意見が多いときは、中の人と分けて書きます。']],
+  [['今ここを動かす','「今ここ」を「比べ合う」に動かします。'],['つけたしを書く','つけたしの意見を、その意見の横に書きます。'],['○△をつける','賛成に○（赤）、反対に△（青）をつけます。']],
+  [['今ここを動かす','「今ここ」を「まとめる」に動かします。'],['意見をつなぐ','合わせた案のもとの意見を、線でつなぎます。'],['決まったことを書く','合わせた案と、決まったことを書きます。']]
+ ]
+};
+DATA.koku.two={mh:'2人のときは、1人目が右と左、2人目が中をします。'};
+/* 準備の選択肢 */
+DATA.prep.furi={lo:'ふりかえりの 時間',mh:'ふり返りの時間'};
+DATA.prep.senseiH={lo:'先生の おはなし',mh:'先生の話'};
+DATA.prep.senseiOnce={lo:'はじめに 1かい',mh:'はじめに1回'};
+DATA.prep.senseiEach={lo:'はなしあう ことごとに',mh:'柱ごとに'};
+DATA.prep.loPH={lo:'はなしあう ことの かず',mh:''};
+DATA.prep.loP1={lo:'1つ',mh:''};
+DATA.prep.loP2={lo:'2つ',mh:''};
+DATA.prep.hashiraNote.lo='はなしあう ことの かずは、上で えらびます。';
+/* 高学年：みんなタブの「決めるときに大切にすること」 */
+DATA.minna.kimeruH={hi:'決めるときに大切にすること',mid:'',lo:''};
+DATA.minna.kimeru={hi:['多数決の前に、話し合いをつくします。','少数の意見にも、よいところがないかを考えます。','提案理由とめあてに合っているかで考えます。','友だちの考えのよさに気づいたら、自分の考えを変えてもよいです。','自分とちがう意見に決まっても、気持ちよく協力します。'],mid:[],lo:[]};
+DATA.ui.kindKw={lo:'キーワードつき',mh:'キーワードつき'};
+DATA.ui.kindHead={lo:'見出しだけ',mh:'見出しだけ'};
+/* ---------- 追加（UI直し：メニュー・道のり・全画面の時計・縦書きの黒板） ---------- */
+DATA.ui.menu={all:'メニュー'};
+DATA.ui.prevLab={lo:'まえ',mh:'前'};
+DATA.ui.prevBtn={lo:'もどる',mh:'もどる'};
+DATA.ui.goBtn={lo:'つぎへ',mh:'次へ'};
+DATA.ui.bigShow={lo:'大きく 見せる',mh:'大きく{表示|ひょうじ}'};
+DATA.koku.lab.awase={lo:'',mh:'合わせた案'};
+DATA.koku.lab.boardNote={lo:'黒ばんの れい（右から 左へ、たてに 書く。いまの ところが 光ります）',mh:'黒板の見取り図（右から左へ、たてに書く。いまのところが光ります）',hi:'黒板の見取り図（右から左へ、縦に書く。いまのところが光ります）'};
+DATA.koku.kata={h:{lo:'黒ばんの 書きかた',mh:'黒板の書き方の{型|かた}'},
+ lo:['右から じゅんに 書きます。','いちばん 右に、ぎだいと めあての カードを たてに はります。','まん中に、みんなの かんがえを たてに 書きます。','にて いる ものは、線で かこみます。','いちばん 左に、きまった ことを 書きます。'],
+ mid:['右から左へ、じゅんに書きます。','いちばん右に、議題・{提案|ていあん}理由・めあて・柱のたんざくを、たてにはります。','その左に、「出し合う」「くらべ合う」「まとめる」の札をたてにはります。','いま話し合っている札に、「今ここ」をつけます。','出た意見は、短い言葉で、たてのたんざくに書きます。','意見のたんざくは、右から順にならべます。','{賛成|さんせい}は○（赤）、反対は△（青）を、意見のたんざくの上につけます。','にている意見は、線でつなぎます。','いちばん左に、合わせた案と決まったことを書きます。'],
+ hi:['右から左へ、順に書きます。','いちばん右に、議題・提案理由・めあて・柱の短冊を、縦にはります。','その左に、「出し合う」「比べ合う」「まとめる」の札を縦にはります。','いま話し合っている札に、「今ここ」をつけます。','出た意見は、短い言葉で、縦の短冊に書きます。','意見の短冊は、右から順にならべます。','賛成は○（赤）、反対は△（青）を、意見の短冊の上につけます。','似ている意見は、線でつなぎます。','合わせた案は、わくで囲みます。','いちばん左に、合わせた案と決まったことを書きます。']};
+DATA.koku.share={h:{lo:'2人で 書く とき',mh:'{分担|ぶんたん}の例'},
+ lo:[['1人目','右に カードを はる。左に きまった ことを 書く。'],['2人目','先生と いっしょに、まん中に みんなの かんがえを 書く。']],
+ mid:[['3人のとき　右の人','たんざくをたてにはる。「今ここ」の札を動かす。'],['3人のとき　中の人','意見を、たてのたんざくに書く。'],['3人のとき　左の人','意見のたんざくの上に○△をつける。合わせた案と、決まったことを書く。'],['2人のとき','1人目が右と左、2人目が中を書く。']],
+ hi:[['3人のとき　右の人','短冊を縦にはる。「今ここ」の札を動かす。'],['3人のとき　中の人','意見を、縦の短冊に書く。'],['3人のとき　左の人','意見の短冊の上に○△をつける。合わせた案と、決まったことを書く。'],['2人のとき','1人目が右と左、2人目が中を書く。'],['柱が2つ以上のとき','決まったことだけを左に残し、意見の短冊を書きかえます。']]};
+DATA.koku.pre={h:{lo:'前の 日に する こと',mh:'前の日までにすること'},
+ lo:['先生と いっしょに、ぎだいと めあての カードを 書きます。'],
+ mid:['議題・{提案|ていあん}理由・めあて・柱を、たてのたんざくに書いておきます。','「出し合う」「くらべ合う」「まとめる」「今ここ」の札を用意します。'],
+ hi:['議題・提案理由・めあて・柱を、縦の短冊に書いておきます。','「出し合う」「比べ合う」「まとめる」「今ここ」の札を用意します。']};
+DATA.koku.who={
+ mid:[
+  [['今ここをはる','「今ここ」の札を「出し合う」にはります。'],['意見を書く','出た意見を、たてのたんざくに書きます。'],['中を手つだう','意見が多いときは、中の人と分けて書きます。']],
+  [['今ここを動かす','「今ここ」の札を「くらべ合う」に動かします。'],['つけたしを書く','つけたしを、その意見のたんざくの左に書きます。'],['○△をつける','意見のたんざくの上に、{賛成|さんせい}は○（赤）、反対は△（青）をつけます。']],
+  [['今ここを動かす','「今ここ」の札を「まとめる」に動かします。'],['意見をつなぐ','合わせた案のもとの意見を、線でつなぎます。'],['決まったことを書く','いちばん左に、合わせた案と決まったことを書きます。']]
+ ],
+ hi:[
+  [['今ここをはる','「今ここ」の札を「出し合う」にはります。'],['意見を書く','出た意見を、縦の短冊に書きます。'],['中を手伝う','意見が多いときは、中の人と分けて書きます。']],
+  [['今ここを動かす','「今ここ」の札を「比べ合う」に動かします。'],['つけたしを書く','つけたしを、その意見の短冊の左に書きます。'],['○△をつける','意見の短冊の上に、賛成は○（赤）、反対は△（青）をつけます。']],
+  [['今ここを動かす','「今ここ」の札を「まとめる」に動かします。'],['意見をつなぐ','合わせた案のもとの意見を、線でつなぎます。'],['決まったことを書く','いちばん左に、合わせた案と決まったことを書きます。']]
+ ]
+};
+/*DATA-END*/
+
+/* 先生画面の文（大人向け。漢字の点検の対象外） */
+var TEACHER={
+ aim:['子どもが自分たちで学級会を回すための「台本」と「手順」を、役割ごとに出すサイトです。','1年の中で、ステップ1（セリフ全文）→ステップ2（キーワードだけ）→ステップ3（流れの見出しだけ）と、見える情報を減らしていきます。最後は、紙1枚の流れ表だけで進められることをめざします。','先生は答えを出しません。決めるのも、ふり返るのも子どもです。先生が出る場面は、下の「先生のお話の入れどころ」に限っておくと、自治が育ちやすくなります。'],
+ youryou:[
+  {h:'学級活動の目標',q:'学級や学校での生活をよりよくするための課題を見いだし，解決するために話し合い，合意形成し，役割を分担して協力して実践したり，学級での話合いを生かして自己の課題の解決及び将来の生き方を描くために意思決定して実践したりすることに，自主的，実践的に取り組むことを通して，第１の目標に掲げる資質・能力を育成することを目指す。',src:'小学校学習指導要領（平成29年告示）第６章 第２〔学級活動〕１ 目標（解説 特別活動編 p.43 に掲載）'},
+  {h:'このナビが当たる内容：学級活動(1)ア',q:'(1) 学級や学校における生活づくりへの参画　ア　学級や学校における生活上の諸問題の解決　学級や学校における生活をよりよくするための課題を見いだし，解決するために話し合い，合意形成を図り，実践すること。',src:'同 ２ 内容（解説 p.46）'},
+  {h:'かかわる内容：学級活動(1)イ（役割）',q:'イ　学級内の組織づくりや役割の自覚　学級生活の充実や向上のため，児童が主体的に組織をつくり，役割を自覚しながら仕事を分担して，協力し合い実践すること。',src:'同 ２ 内容（解説 p.46）'},
+  {h:'学年段階の配慮事項〔第１学年及び第２学年〕',q:'話合いの進め方に沿って，自分の意見を発表したり，他者の意見をよく聞いたりして，合意形成して実践することのよさを理解すること。基本的な生活習慣や，約束やきまりを守ることの大切さを理解して行動し，生活をよくするための目標を決めて実行すること。',src:'同 ３ 内容の取扱い (1)（解説 p.76）'},
+  {h:'学年段階の配慮事項〔第３学年及び第４学年〕',q:'理由を明確にして考えを伝えたり，自分と異なる意見も受け入れたりしながら，集団としての目標や活動内容について合意形成を図り，実践すること。自分のよさや役割を自覚し，よく考えて行動するなど節度ある生活を送ること。',src:'同 ３ 内容の取扱い (1)（解説 p.76）'},
+  {h:'学年段階の配慮事項〔第５学年及び第６学年〕',q:'相手の思いを受け止めて聞いたり，相手の立場や考え方を理解したりして，多様な意見のよさを積極的に生かして合意形成を図り，実践すること。高い目標をもって粘り強く努力し，自他のよさを伸ばし合うようにすること。',src:'同 ３ 内容の取扱い (1)（解説 p.76）'},
+  {h:'多数決と少数意見（解説）',q:'この内容は，特別活動における自発的，自治的な活動の中心となる内容である。特に，自分と異なる意見や少数の意見も尊重し，安易に多数決で決定することなく，折り合いを付けて集団としての意見をまとめることの大切さを理解したり，合意形成を図っていくための手順や方法を身に付けたりすることができるようにすることが，児童会活動やクラブ活動において自発的，自治的な活動を行っていく上での基盤となる。',src:'小学校学習指導要領解説 特別活動編 p.49'},
+  {h:'低学年の入学当初（解説）',q:'特に入学当初の時期においては，教師が話合いの司会の役割を受け持ち，記録についても担当するなどして，話合いの進め方を実際に見て，理解できるようにすることが大切である。',src:'解説 特別活動編 p.76'},
+  {h:'中学年（解説）',q:'中学年では，理由を明確にしたわかりやすい発言，自分と異なる意見の受容，公平な判断ができるように特に配慮する。また，学級会において提案理由を踏まえ，自分もよくみんなもよいものとなるよう合意形成を図り，決まったことをみんなで協力し実践できるように適切な指導をすることが大切である。',src:'解説 特別活動編 p.77'},
+  {h:'高学年（解説）',q:'高学年では，出された意見の一つ一つを大切に受け止め，意見の背景にある相手の立場や考え方を理解できるように特に配慮する。また，出された意見を基にして，組み合わせたり，よいところを取り入れて新たな考えを生み出したりするなど，創意工夫を生かして合意形成を図ることができる活動となるよう配慮する。建設的な話合いの求められる高学年においては，一連の活動を振り返り，次の活動に生かしていくことを意識した取組が大切になる。',src:'解説 特別活動編 p.77'}
+ ],
+ bandDiff:[
+  ['','低学年（1・2年）','中学年（3・4年）','高学年（5・6年）'],
+  ['漢字','1・2年の配当漢字まで。ほかはひらがな','4年の配当漢字まで。5年以上はルビかひらがな','6年の配当漢字まで'],
+  ['言い方','短い文。1文に1つの動作。「提案理由」→「はなしあう わけ」','提案理由・賛成・反対などの言葉を使う（ルビつき）','資料（話合いのすすめ方）の言い回しにいちばん近い'],
+  ['柱の数','1つ（準備で2つまで選べる）','2つまで','3つまで'],
+  ['話し合いの中','かんがえを出す → にているものをまとめる → きめる','出し合う → くらべ合う → まとめる（賛成・反対の理由、合わせる案）','出し合う → 比べ合う → まとめる（折り合い、多数決の前に話し合いをつくす、少数意見）'],
+  ['流れ','12段階（学級目標・歌を入れると13）。めあてと話し合うことを1つに、ふり返りと感想を1つにまとめた','12段階（同13）。めあてと柱を1つに、ふり返りと感想を1つにまとめた','14段階（同15）。資料「話合いのすすめ方」の14段階をもとにした。変えたところ：学級目標は準備で選ぶ形にし、歌を足した／「決まっていること」をめあての確認に入れた／資料では話合いの中にある1回目の先生の話を、独立した段階にした／発言大賞をキラリ賞にした'],
+  ['役割','黒板書記は「先生といっしょに書く」。ノート書記は決まったことを書く','4役とも子ども。黒板書記は2〜3人で分担','4役とも子ども。副司会が時計と発言の記録を受け持つ'],
+  ['ほめる場面','キラリさん','キラリしょう','キラリ賞（発言の数だけでなく、聞き方・中身・折り合いの案もほめる）'],
+  ['先生の話','はじめに1回（既定）＋最後。準備で「はなしあう ことごとに」を選ぶと、2つめの前にも入る','はじめに1回（既定）＋最後。準備で「柱ごとに」を選ぶと、柱2の前にも入る','はじめに1回（既定）＋最後。準備で「柱ごとに」を選ぶと、柱2・柱3の前にも入る'],
+  ['10か条','3つにしぼった（短い言い方）','10か条（短い言い方）','10か条（資料の文に近い。配当外の漢字だけ言いかえた）']
+ ],
+ steps:[
+  ['ステップ1　はじめのころ（4月〜）','セリフを全文で出します。（　）には準備で入れた議題などが自動で入ります。役割ごとに「いま言うこと」「いまやること」が出ます。','司会グループが、画面を読みながら最後まで回せる。','計画委員会（司会グループ）の練習に先生が入り、1回は通して読む。低学年の最初は、先生が司会をして見せてもよい（解説 p.76）。'],
+  ['ステップ2　なれてきたら（9月〜）','セリフはキーワードだけになります。全文は「こまったら開く」の中です。','司会グループが2回りほどして、キーワードから自分の言葉で言える。「こまったら開く」を開く回数が減ってきた。','事前の練習は子どもだけで。先生は、比べ合う段階の言葉が出ているかを見る。'],
+  ['ステップ3　じぶんたちで（1月〜）','流れの見出しだけになります。「こまったときは」は残ります。「どうしてもこまったら開く」は二段で、まずキーワード、その中に全部の文があります。全体画面（テレビ）は、議題・めあて・柱・時計だけになり、「いま／次は」と役割の一言は出ません。流れ表は2種類：キーワードつき（ステップ2から3への橋わたし）と、見出しだけ（ステップ3の本番）。','めざす姿は2段です。①紙1枚の流れ表だけで最後まで進められる。②紙も見ないで進められる。','まず「キーワードつき」、次に「見出しだけ」の流れ表で1回ずつやってみる。うまくいかなければステップ2にもどしてよい（もどすのは失敗ではない）。']
+ ],
+ talkPoints:[
+  ['話し合いの前（「先生の話」の1回目）','話し合いの視点を1つだけ示します。例：「提案理由の『〜のため』に合う考えかどうかで比べてみよう」。答えや、先生の好みの案は言いません。'],
+  ['話し合いの中','原則は見守ります。出るのは次のときだけにします。①議題やめあてから大きくそれたとき　②人を傷つける言葉が出たとき　③お金・安全・決まりにかかわることを決めようとしているとき（子どもに任せられないこと）。出るときも「どうしたらいいと思う？」と、子どもに返します。'],
+  ['最後（「先生の話」の2回目）','よかった姿を具体的にほめます（だれの、どんな言葉や聞き方がよかったか）。決まったことを実行する日や方法の見通しを、子どもと確かめます。次の学級会でがんばることを1つ示してもよいです。']
+ ],
+ howto:[
+  '学校のパソコンでは GitHub Pages の URL で開きます。このファイル（学級会ナビ.html）をダブルクリックしても動きます。インターネットがなくても動きます。',
+  '最初の画面で「学年の段階」と「ステップ」を選びます。選んだものは、その端末のブラウザが覚えます。URL の末尾に #g=hi&s=1 のように付けても開けます（g＝lo 低学年／mid 中学年／hi 高学年、s＝1〜3）。',
+  '準備タブに議題・提案理由・めあて・柱を入れると、セリフの（　）に入ります。「リンクをコピーする」で作ったリンクを、Classroom などで配ると、ほかの端末でも同じ中身で開きます（中身はリンクの中に入っていて、サーバーには送りません）。',
+  '全体画面：テレビにつなぐパソコンで、URL の末尾に #tv を付けて開きます。同じパソコンの別のタブで開いた司会の画面で段階を進めると、全体画面も進みます。別のパソコンどうしは連動しません。',
+  '流れ表（印刷）：URL の末尾に #print&k=1（キーワードつき）か #print&k=0（見出しだけ）。ステップ3の司会の画面と、準備タブからも開けます。どちらもA4縦1枚です。',
+  '名前は入れない作りです。提案者は番号か班で入れます。役割のしょうかいやキラリ賞の名前は、（　）のまま子どもが口で言います。',
+  '時計をテレビに出すときは、司会のパソコンでブラウザのタブをもう1つ開き、副司会タブにします。そのタブで時計を動かすと、全体画面に出ます（別のパソコンの時計は、テレビには出ません）。',
+  '話合いの10か条は、学年に合わせて短くしてあります（低学年は3つ、中学年は短い言い方、高学年は資料の文に近い言い方）。',
+  'その端末に覚えた中身を消すときは、準備タブの「書いたことを全部消す」を使います。'
+ ]
+};
+
+(function(){
+'use strict';
+var KEY='gakkyukai_navi_v1', LIVE='gakkyukai_navi_live_v1', NOTEKEY='gakkyukai_navi_noteclosed_v1';
+var ID=Math.random().toString(36).slice(2);
+var SCOL=['#1d5fd1','#7b3fc4','#0b7f86','#b3197f','#26478d','#8a4b0f','#1b8a3a','#c0561a'];
+var BANDS=['lo','mid','hi'], MAXP={lo:1,mid:2,hi:3};
+var VIEW='main', G=null, S=null, TAB='s', PK=true;
+var pos={id:'start',pil:0,ph:0};
+var prep=defPrep();
+var timer={run:false,end:0,rem:600,base:600,touched:false};
+var bandAll=false, chooser=false, tmpG=null, tmpS=null, askClear=false, CP=0;
+var bc=null,menuOpen=false;
+try{bc=new BroadcastChannel('gakkyukai_navi');}catch(e){bc=null;}
+
+function defPrep(){return {kai:'',gidai:'',teian:'',riyu:'',meate:'',h:['','',''],m:['','',''],kimatte:'',mok:false,uta:false,utaName:'',jo:[false,false,false],fm:'2',sen:'once',lp:1};}
+function $(id){return document.getElementById(id);}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+
+/* ---------- 文の取り出し ---------- */
+function T(x){
+ if(x==null)return '';
+ if(typeof x!=='object'||Array.isArray(x))return x;
+ if(x[G]!=null)return x[G];
+ if(G!=='lo'&&x.mh!=null)return x.mh;
+ if(x.all!=null)return x.all;
+ return '';
+}
+/* 高学年はルビを外す（ルビの字も6年までに収めてある） */
+function ruby(s){if(G==='hi')return s.replace(/\{([^|{}]+)\|([^{}]+)\}/g,'$1');return s.replace(/\{([^|{}]+)\|([^{}]+)\}/g,'<ruby>$1<rt>$2</rt></ruby>');}
+var BL='<span class="blank">（　　　）</span>';
+function fv(v){v=String(v==null?'':v).trim();return v?'<b class="fill">'+esc(v)+'</b>':BL;}
+function maxP(){return G==='lo'?(+prep.lp===2?2:1):(MAXP[G]||1);}
+function nP(){var n=0,max=maxP();for(var i=0;i<max;i++)if(String(prep.h[i]||'').trim())n=i+1;return Math.max(1,n);}
+/* 柱の呼び名：低学年は「1つめ」（2つのときだけ）、中・高学年は「柱1」 */
+function pl(i){if(G==='lo')return maxP()>1?(i+1)+'つめ':'';return '柱'+(i+1);}
+function senEach(){return prep.sen==='each';}
+function ph(k){
+ if(k==='kai'){var v=String(prep.kai||'').trim();if(!v)return '';return G==='lo'?'だい'+esc(v)+'かいの ':'第'+esc(v)+'回';}
+ if(k==='gidai'||k==='riyu'||k==='meate'||k==='kimatte'||k==='teian')return fv(prep[k]);
+ if(k==='uta')return fv(prep.utaName);
+ if(k==='h1')return fv(prep.h[0]);
+ if(k==='furi')return esc(String(prep.fm||'').trim()||'2');
+ if(k==='hlist'){var a=[];for(var i=0;i<nP();i++)a.push(G==='lo'?'「'+fv(prep.h[i])+'」':'柱'+(i+1)+'「'+fv(prep.h[i])+'」');return G==='lo'?a.join('と '):a.join('、');}
+ if(k==='jikan'){var b=[];for(var j=0;j<nP();j++){var m=String(prep.m[j]||'').trim();if(m)b.push('柱'+(j+1)+'は'+esc(m)+'分');}return b.length?b.join('、'):BL;}
+ if(k==='p')return fv(prep.h[CP]);
+ if(k==='pn')return String(CP+1);
+ if(k==='min')return esc(prep.m[CP]||'');
+ return '';
+}
+function F(s){return ruby(esc(T(s))).replace(/\[\[(\w+)\]\]/g,function(m,k){return ph(k);});}
+function Fp(s){return ruby(esc(T(s))).replace(/\[\[(\w+)\]\]/g,function(m,k){return ph(k).replace(/<[^>]+>/g,'');});}
+function condOK(c){
+ if(!c)return true;
+ if(c==='mt')return !!(prep.mok||prep.uta);
+ if(c==='mok')return !!prep.mok;
+ if(c==='uta')return !!prep.uta;
+ if(c==='kim')return !!String(prep.kimatte||'').trim();
+ if(c==='jik'){for(var i=0;i<nP();i++)if(String(prep.m[i]||'').trim())return true;return false;}
+ if(c==='p1')return CP===0;
+ if(c==='p2')return CP>0;
+ return true;
+}
+function role(r){return F(DATA.ui.roles[r]);}
+
+/* ---------- 流れ ---------- */
+/* 話し合いの中は {pil:柱, ph:段階}。ph=-1 は「柱ごとの先生の話」 */
+function stages(){return DATA.stages[G].filter(function(s){return condOK(s.cond);});}
+function curStage(){var a=stages();for(var i=0;i<a.length;i++)if(a[i].id===pos.id)return a[i];return a[0];}
+function talkPh(){return DATA.talk[G];}
+function phList(p){var a=[];if(p>0&&senEach())a.push(-1);a.push(0,1,2);return a;}
+function phName(q){return q<0?DATA.talkSensei[G].n:talkPh()[q].n;}
+function seq(){
+ var out=[];stages().forEach(function(s){
+  if(s.talk){for(var p=0;p<nP();p++)phList(p).forEach(function(q){out.push({id:s.id,pil:p,ph:q});});}
+  else out.push({id:s.id,pil:0,ph:0});
+ });return out;
+}
+function seqIdx(){var a=seq(),t=curStage().talk;for(var i=0;i<a.length;i++){var x=a[i];if(x.id===pos.id&&(!t||(x.pil===pos.pil&&x.ph===pos.ph)))return i;}return 0;}
+function fixPos(){
+ var s=curStage();pos.id=s.id;
+ if(s.talk){if(pos.pil>=nP())pos.pil=nP()-1;if(pos.pil<0)pos.pil=0;if(phList(pos.pil).indexOf(pos.ph)<0)pos.ph=0;}
+ else{pos.pil=0;pos.ph=0;}
+}
+function move(d){var a=seq(),i=seqIdx()+d;if(i<0||i>=a.length)return;pos={id:a[i].id,pil:a[i].pil,ph:a[i].ph};changed(true);}
+function curItem(){
+ var s=curStage();
+ if(s.talk){CP=pos.pil;var t=pos.ph<0?DATA.talkSensei[G]:talkPh()[pos.ph];return {stage:s,talk:true,sen:pos.ph<0,n:t.n,kw:t.kw,say:t.say,do:t.do,tip:t.tip,cards:t.cards};}
+ CP=0;return {stage:s,talk:false,n:s.n,kw:s.kw,say:s.say,do:s.do,tip:s.tip,cards:null};
+}
+function itemAt(x){var keep=pos;pos=x;var it=curItem();var h=headText(it);pos=keep;curItem();return h;}
+function headText(it){
+ if(!it.talk)return F(it.n);
+ var nm=F(it.stage.n),lab=pl(CP);
+ return nm+'　'+(lab?'<span class="nw">'+lab+'</span>　・　':'・　')+(G==='lo'?F(it.n):'<span class="nw">'+F(it.n)+'</span>');
+}
+function headSub(it){if(!it.talk)return '';return '「'+fv(prep.h[CP])+'」';}
+function linesOf(it){
+ var out=[];(it.say||[]).forEach(function(l){
+  if(l[2]==='each'){var keep=CP;for(var p=0;p<nP();p++){CP=p;out.push({r:l[0],h:F(l[1])});}CP=keep;return;}
+  if(!condOK(l[2]))return;out.push({r:l[0],h:F(l[1])});
+ });return out;
+}
+function doOf(it,r){var d=(it.do&&it.do[r])||null;if(!d||!d.length)d=(G==='lo'?DATA.idle.lo:DATA.idle.mh)[r]||[];return d;}
+/* 黒板書記の人ごとの仕事（中・高学年の話し合いの中だけ） */
+function whoOf(it){if(G==='lo'||!it.talk||it.sen)return null;return DATA.koku.who[G][pos.ph]||null;}
+
+/* ---------- 保存と連動 ---------- */
+function snapshot(){return {g:G,s:S,prep:prep,pos:pos,timer:timer,at:Date.now(),src:ID};}
+function save(){lsSet(KEY,JSON.stringify({g:G,s:S,tab:TAB,prep:prep,pos:pos}));}
+function broadcast(){var o=snapshot();lsSet(LIVE,JSON.stringify(o));if(bc){try{bc.postMessage(o);}catch(e){}}}
+function changed(render){fixPos();save();broadcast();setHash();if(render!==false)renderAll();}
+function cleanPrep(o){
+ var p=defPrep();if(!o||typeof o!=='object')return p;
+ ['kai','gidai','teian','riyu','meate','kimatte','utaName'].forEach(function(k){if(o[k]!=null)p[k]=String(o[k]).slice(0,k==='riyu'?200:120);});
+ for(var i=0;i<3;i++){if(o.h&&o.h[i]!=null)p.h[i]=String(o.h[i]).slice(0,80);if(o.m&&o.m[i]!=null)p.m[i]=String(o.m[i]).replace(/[^0-9]/g,'').slice(0,3);if(o.jo&&o.jo[i])p.jo[i]=true;}
+ p.mok=!!o.mok;p.uta=!!o.uta;p.kai=p.kai.replace(/[^0-9０-９]/g,'').slice(0,3);
+ if(o.fm!=null)p.fm=String(o.fm).replace(/[^0-9]/g,'').slice(0,2);
+ p.sen=o.sen==='each'?'each':'once';p.lp=+o.lp===2?2:1;
+ return p;
+}
+function cleanTimer(o){if(!o||typeof o!=='object')return timer;return {run:!!o.run,end:+o.end||0,rem:+o.rem||0,base:+o.base||600,touched:!!o.touched};}
+function apply(o){
+ if(!o)return;
+ if(BANDS.indexOf(o.g)>=0)G=o.g;
+ if(o.s===1||o.s===2||o.s===3)S=o.s;
+ if(o.prep)prep=cleanPrep(o.prep);
+ if(o.pos&&typeof o.pos.id==='string')pos={id:o.pos.id,pil:+o.pos.pil||0,ph:+o.pos.ph||0};
+ if(o.timer)timer=cleanTimer(o.timer);
+}
+function load(){
+ try{var o=JSON.parse(lsGet(KEY)||'null');if(o){apply(o);if(['prep','s','f','k','n','m'].indexOf(o.tab)>=0)TAB=o.tab;}}catch(e){}
+ try{var l=JSON.parse(lsGet(LIVE)||'null');if(l&&l.timer)timer=cleanTimer(l.timer);}catch(e){}
+}
+function noteClosed(){try{return JSON.parse(lsGet(NOTEKEY)||'{}')||{};}catch(e){return {};}}
+function enc(o){try{return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}catch(e){return '';}}
+function dec(s){try{s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return JSON.parse(decodeURIComponent(escape(atob(s))));}catch(e){return null;}}
+function parseHash(){
+ var h=(location.hash||'').replace(/^#/,''),r={};
+ h.split('&').forEach(function(t){if(!t)return;var i=t.indexOf('=');if(i<0){r.v=t;return;}var k=t.slice(0,i),v=t.slice(i+1);if(k==='view')k='v';r[k]=v;});
+ return r;
+}
+function setHash(){
+ if(VIEW!=='main'||!G||!S)return;
+ var h='#g='+G+'&s='+S;
+ if(location.hash!==h){try{history.replaceState(null,'',h);}catch(e){}}
+}
+function shareUrl(v){var base=location.href.split('#')[0];return base+'#'+(v?v+'&':'')+'g='+G+'&s='+S+'&d='+enc(prep);}
+function printHref(k){return '#print&g='+G+'&s='+S+'&k='+k;}
+
+/* ---------- 部品 ---------- */
+/* 役割の色とマーク（色だけに頼らず、マークと文字も出す） */
+var RC={prep:['#4b5563','#f1f3f6'],s:['#c62828','#fdecec'],f:['#b45309','#fff4e5'],k:['#2e7d32','#eaf6eb'],n:['#1565c0','#e9f2fd'],m:['#6a1b9a','#f5ecfa'],t:['#6a1b9a','#f5ecfa'],g:['#c62828','#fdecec'],z:['#6a1b9a','#f5ecfa']};
+function svg(p){return '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>';}
+var IC={
+ s:svg('<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v4"/><path d="M8 22h8"/>'),
+ f:svg('<path d="M7 11V6a1.5 1.5 0 0 1 3 0v4"/><path d="M10 10V4a1.5 1.5 0 0 1 3 0v6"/><path d="M13 10V5a1.5 1.5 0 0 1 3 0v6"/><path d="M16 11V8a1.5 1.5 0 0 1 3 0v6a7 7 0 0 1-7 7h-1a6 6 0 0 1-5-3l-2.5-4a1.5 1.5 0 0 1 2.5-1.6L7 14"/>'),
+ k:svg('<rect x="2" y="3" width="20" height="13" rx="1.5"/><path d="M7 20l2-4"/><path d="M17 20l-2-4"/><path d="M6 7h6"/><path d="M6 10.5h9"/>'),
+ n:svg('<rect x="5" y="2.5" width="14" height="19" rx="2"/><path d="M9 2.5v19"/><path d="M12 7h4"/><path d="M12 10.5h4"/>'),
+ m:svg('<circle cx="8" cy="8" r="3"/><circle cx="16.5" cy="9" r="2.5"/><path d="M2.5 20a5.5 5.5 0 0 1 11 0"/><path d="M13.5 15.2a4.5 4.5 0 0 1 8 3.8"/>'),
+ prep:svg('<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2.8h6V4"/><path d="M8.5 10l1.7 1.7L14 8"/><path d="M8.5 16h7"/>'),
+ menu:svg('<path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/>'),
+ go:svg('<path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>'),
+ back:svg('<path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/>'),
+ big:svg('<path d="M4 9V4h5"/><path d="M20 9V4h-5"/><path d="M4 15v5h5"/><path d="M20 15v5h-5"/>')
+};
+function rcStyle(r){var c=RC[r]||RC.prep;return '--rc:'+c[0]+';--rbg:'+c[1];}
+function bub(l,mode){
+ var cls=mode==='me'?'me':(mode==='other'?'other':'');
+ return '<div class="bubble '+cls+'"><span class="r" style="--sc:'+(RC[l.r]||RC.prep)[0]+'">'+role(l.r)+'</span>'+l.h+'</div>';
+}
+function lis(arr,cls){return '<ul class="'+(cls||'tl')+'">'+arr.map(function(x){return '<li>'+F(x)+'</li>';}).join('')+'</ul>';}
+function card(h,body,cls){return '<div class="card '+(cls||'')+'"><h2>'+h+'</h2>'+body+'</div>';}
+/* たたむカード：ステップ1は開いておく */
+function fold(h,body,cls,open){return '<details class="fold '+(cls||'')+'"'+((open==null?S===1:open)?' open':'')+'><summary>'+h+'</summary>'+body+'</details>';}
+function troubleCard(r){
+ var arr=T(DATA.trouble[r])||[];
+ return fold(F(DATA.ui.trouble),'<div class="cards2">'+arr.map(function(t){return '<div class="tk"><b>'+F(t[0])+'</b>'+lis(t[1],'')+'</div>';}).join('')+'</div>','trouble');
+}
+function linkBtn(href,label,act){return '<a class="btn" style="display:inline-flex;align-items:center;text-decoration:none" href="'+href+'" data-act="'+(act||'')+'">'+label+'</a>';}
+function printBtns(){return '<div class="navbtns">'+linkBtn(printHref(1),F(DATA.ui.printKw),'toprint')+linkBtn(printHref(0),F(DATA.ui.printHead),'toprint')+'</div>';}
+/* 黒板書記：右・中・左の人の小さなカード */
+function whoCards(w,short){
+ var labs=T(DATA.koku.pos);
+ return '<div class="lab"><span>'+role('k')+'</span>'+F(DATA.koku.posH)+'</div><div class="pos3">'+w.map(function(x,i){return '<div class="tk"><b>'+F(labs[i])+'</b><p>'+F(short?x[0]:x[1])+'</p></div>';}).join('')+'</div><p class="ex">'+F(DATA.koku.two)+'</p>';
+}
+
+/* 役割ごとの「いま」のカード（段階の名前は上の「道のり」に出す） */
+function nowCard(r){
+ var it=curItem(),L=linesOf(it),h='';
+ var head='<div class="rolehead">'+IC[r]+'<b>'+role(r)+'</b><span>'+F(DATA.ui.roleDesc[r])+'</span></div>'+(it.talk?'<div class="hint">'+F(DATA.ui.hashira)+'：'+headSub(it)+'</div>':'');
+ var full='';
+ if(r==='s'){
+  full+='<div class="say-t">'+F(DATA.ui.sayAll)+'</div>'+L.map(function(l){return bub(l,l.r==='s'?'me':'other');}).join('');
+  (it.tip||[]).forEach(function(t){full+='<div class="hint">'+F(t)+'</div>';});
+ }else{
+  var gl=L.filter(function(l){return l.r===r||(l.r==='g'&&(r==='f'||r==='k'||r==='n'))||((l.r==='z'||l.r==='m'||l.r==='t')&&r==='m');});
+  if(gl.length)full+='<div class="say-t">'+F(DATA.ui.sayMe)+'</div>'+gl.map(function(l){return bub(l,'me');}).join('');
+  if(r==='m'&&gl.some(function(l){return l.r==='t';}))full+='<div class="hint">'+role('t')+'：'+fv(prep.teian)+'</div>';
+  if(r==='f'&&it.stage.id==='kirari')(it.tip||[]).forEach(function(t){full+='<div class="hint">'+F(t)+'</div>';});
+ }
+ var dl=doOf(it,r),w=(r==='k')?whoOf(it):null;
+ if(w)full+=whoCards(w,false);
+ else full+='<div class="lab"><span>'+role(r)+'</span>'+F(DATA.ui.doNow)+'</div>'+lis(dl);
+ var cards='';
+ if(r==='s'&&it.cards)it.cards.forEach(function(c){cards+='<div class="tk" style="margin:.4rem 0"><b>'+F(c.h)+'</b>'+lis(c.items,'')+'</div>';});
+ var labs=T(DATA.koku.pos);
+ var kwList=r==='s'?it.kw:(w?w.map(function(x,i){return labs[i]+'：'+T(x[0]);}):[dl[0]]);
+ var chips='<div class="chips">'+kwList.map(function(k){return '<span class="chip'+(r==='s'?'':' me')+'">'+F(k)+'</span>';}).join('')+'</div>';
+ if(S===1){h=head+full+cards;}
+ else if(S===2){
+  h=head+'<div class="say-t">'+F(DATA.ui.kwHead)+'</div>'+chips+'<details><summary>'+F(DATA.ui.openFull)+'</summary>'+full+cards+'</details>';
+ }else{
+  /* 二段：まずキーワード、その中にさらに全部の文 */
+  h=head+'<details class="lr"><summary>'+F(DATA.ui.lastResort)+'</summary><div class="say-t">'+F(DATA.ui.kwNest)+'</div>'+chips+
+   '<details class="lr2"><summary>'+F(DATA.ui.fullNest)+'</summary>'+full+cards+'</details></details>';
+  if(r==='s')h+=flowList();
+ }
+ return '<div class="card main">'+h+'</div>';
+}
+function flowList(){
+ var cur=curStage(),past=true;
+ return '<div class="say-t">'+F(DATA.ui.flowHead)+'</div><ul class="flow">'+stages().map(function(s){
+  var cl='';if(s.id===cur.id){cl='now';past=false;}else if(past)cl='past';
+  var t=F(s.n);if(s.talk&&s.id===cur.id){var lab=pl(pos.pil);t+='　'+(lab?lab+'・':'')+F(phName(pos.ph));}
+  return '<li class="'+cl+'">'+t+'</li>';}).join('')+'</ul>'+printBtns();
+}
+
+/* ---------- 各タブ ---------- */
+function tabS(){return '<div class="grid"><div>'+nowCard('s')+'</div><div>'+troubleCard('s')+'</div></div>';}
+function tabF(){
+ var a=DATA.fuku,right='';
+ right+=timerCard();
+ right+=fold(F(a.ate.h),lis(T(a.ate)))+fold(F(a.help.h),lis(T(a.help)))+fold(F(a.kira.h),lis(T(a.kira)));
+ return '<div class="grid"><div>'+nowCard('f')+troubleCard('f')+'</div><div>'+right+'</div></div>';
+}
+function tabK(){
+ var a=DATA.koku;
+ var sh=T(a.share).map(function(x){return '<div class="tk"><b>'+F(x[0])+'</b><p>'+F(x[1])+'</p></div>';}).join('');
+ var right=card(F(a.lab.boardNote),boardHtml())+fold(F(a.kata.h),lis(T(a.kata)))+fold(F(a.share.h),'<div class="who3">'+sh+'</div>')+fold(F(a.pre.h),lis(T(a.pre)));
+ return '<div class="grid"><div>'+nowCard('k')+troubleCard('k')+'</div><div>'+right+'</div></div>';
+}
+/* 黒板の見取り図：縦書き・右から左。
+   右端：短冊（議題・提案理由・めあて・柱）→「出し合う→比べ合う→まとめる」の札と「今ここ」→ 意見の短冊（上に○△）→ 左端：合わせた案・決まったこと */
+function cut(s,n){s=String(s||'').trim();return s.length>n?s.slice(0,n)+'…':s;}
+function boardHtml(){
+ var L=DATA.koku.lab,phs=DATA.koku.phases[G],it=curItem(),cur=(it.talk&&!it.sen)?pos.ph:-1;
+ function t(cls,html){return '<div class="t '+(cls||'')+'">'+html.replace(/(\d{1,2})(?![^<]*>)/g,'<span class="tcy">$1</span>')+'</div>';}
+ var s1='';
+ s1+=t('',(String(prep.kai||'').trim()?ph('kai').replace('の ',''):'')+F(L.kai));
+ s1+=t('y',F(DATA.ui.gidai)+'　'+esc(cut(prep.gidai,12)));
+ if(G!=='lo')s1+=t('',F(L.riyu));
+ s1+=t('y',F(DATA.ui.meate)+'　'+esc(cut(prep.meate,12)));
+ for(var i=0;i<nP();i++){var lb=pl(i);if(G!=='lo'||lb)s1+=t('',lb+'　'+esc(cut(prep.h[i],8)));}
+ var tag=G==='lo'?'いま':'今ここ';
+ var s2=phs.map(function(p,i){return t('ph'+(i===cur?' now':''),(i===cur?'<span class="tag">'+tag+'</span>':'')+F(p));}).join('');
+ var mr=G==='lo'?'':'<span class="mk-r">○○</span>　',mb=G==='lo'?'':'<span class="mk-r">○</span><span class="mk-b">△</span>　';
+ var s3=t('op',mr+F(L.ex1))+t('op',mb+F(L.ex2))+t('op',F(L.ex3));
+ var s4='';
+ if(G!=='lo')s4+=t('y',F(L.awase)+'　（　）');
+ for(var j=0;j<nP();j++){var lb3=pl(j);s4+=t('y',F(L.kimatta)+(lb3?'　'+lb3:''));}
+ return '<div class="boardsc"><div class="board"><div class="sec">'+s1+'</div><div class="sec">'+s2+'</div><div class="sec">'+s3+'</div><div class="sec">'+s4+'</div></div></div>'+
+  '<div class="boardlg"><span>'+F(L.cards)+'</span><span>'+F(DATA.koku.lab.talk)+'</span><span>'+F(L.kimatta)+'</span></div>';
+}
+function tabN(){
+ var a=DATA.note,pres='',ks=null;stages().forEach(function(s){if(s.id==='kimatta')ks=s;});
+ if(ks){var L=linesOf({stage:ks,say:ks.say}).filter(function(l){return l.r==='n';});pres=L.map(function(l){return bub(l,'me');}).join('');}
+ curItem();
+ var right=card(F(a.pres.h),pres)+fold(F(a.write.h),lis(T(a.write)))+fold(F(a.tips.h),lis(T(a.tips)))+fold(F(a.furi.h),lis(T(a.furi)));
+ return '<div class="grid"><div>'+nowCard('n')+troubleCard('n')+'</div><div>'+right+'</div></div>';
+}
+function tabM(){
+ var a=DATA.minna;
+ var kata='<div class="hint">'+F(a.basic)+'</div>'+(G==='lo'?'':'<div class="hint">'+F(a.basic2)+'</div>')+'<div class="cards2" style="margin-top:.4rem">'+T(a.kata).map(function(x){return '<div class="tk"><b>'+F(x[0])+'</b><p style="font-size:1.05rem">'+F(x[1])+'</p></div>';}).join('')+'</div>';
+ var jk='<ol class="tl">'+T(a.jukkajo).map(function(x){return '<li>'+F(x)+'</li>';}).join('')+'</ol>';
+ var km=(T(a.kimeru)||[]).length?fold(F(a.kimeruH),lis(T(a.kimeru))):'';
+ var right=fold(F(a.kataH),kata)+fold(F(a.kikiH),lis(T(a.kiki)))+fold(F(a.yakuH),lis(T(a.yaku)))+km+fold(F(a.jukkajoH),jk,'',G==='lo'?false:null);
+ return '<div class="grid"><div>'+nowCard('m')+troubleCard('m')+'</div><div>'+right+'</div></div>';
+}
+function optBtns(act,cur,list){return '<div class="opts2">'+list.map(function(x){return '<button data-act="'+act+'" data-v="'+x[0]+'" class="'+(String(cur)===String(x[0])?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div>';}
+function tabPrep(){
+ var P=DATA.prep,h='';
+ function fl(lab,small){return '<div class="fl">'+F(lab)+(small?' <small>'+F(small)+'</small>':'')+'</div>';}
+ function inp(k,ph2,cls){return '<input class="tx '+(cls||'')+'" data-f="'+k+'" value="'+esc(prep[k]||'')+'" placeholder="'+esc(ph2||'')+'" autocomplete="off">';}
+ h+='<p class="ex">'+F(P.lead)+'</p><p class="warn" style="margin:.3rem 0">'+F(P.noName)+'</p>';
+ h+=fl(P.kai)+inp('kai','3','num');
+ h+=fl(P.gidai)+inp('gidai','');
+ h+=fl(P.teian)+inp('teian','');
+ h+=fl(P.riyu)+'<textarea class="tx" data-f="riyu">'+esc(prep.riyu||'')+'</textarea>';
+ h+=fl(P.meate)+inp('meate','');
+ if(G==='lo')h+=fl(P.loPH)+optBtns('lp',prep.lp,[[1,F(P.loP1)],[2,F(P.loP2)]]);
+ h+=fl(P.hashira,P.hashiraNote);
+ var tot=0;
+ for(var i=0;i<maxP();i++){var mm=parseInt(prep.m[i],10);if(mm>0)tot+=mm;
+  h+='<div class="prow"><span class="pl">'+pl(i)+'</span><input class="tx" data-h="'+i+'" value="'+esc(prep.h[i]||'')+'" autocomplete="off"><span><input class="tx min" data-m="'+i+'" value="'+esc(prep.m[i]||'')+'" inputmode="numeric" autocomplete="off"> '+F(P.min)+'</span></div>';}
+ h+='<p class="ex" id="ptotal">'+F(P.total)+'：'+tot+F(P.min)+'</p>';
+ h+=fl(P.kimatte,P.kimatteEx)+inp('kimatte','');
+ h+=fl(P.opt)+'<div class="chk"><button data-act="pt" data-k="mok" class="'+(prep.mok?'on':'')+'">'+(prep.mok?'✓ ':'')+F(P.mok)+'</button><button data-act="pt" data-k="uta" class="'+(prep.uta?'on':'')+'">'+(prep.uta?'✓ ':'')+F(P.uta)+'</button></div>';
+ if(prep.uta)h+=fl(P.utaName)+inp('utaName','');
+ h+=fl(P.senseiH)+optBtns('sen',prep.sen,[['once',F(P.senseiOnce)],['each',F(P.senseiEach)]]);
+ h+=fl(P.furi)+'<span><input class="tx min" data-f="fm" value="'+esc(prep.fm||'')+'" inputmode="numeric" autocomplete="off" style="width:4.2em;text-align:center"> '+F(P.min)+'</span>';
+ var left=card(F(P.head),h);
+ var jo=T(P.joken),all=prep.jo[0]&&prep.jo[1]&&prep.jo[2];
+ var jc='<div class="chk">'+jo.map(function(t,i){return '<button data-act="jo" data-i="'+i+'" class="'+(prep.jo[i]?'on':'')+'">'+(prep.jo[i]?'✓ ':'□ ')+F(t)+'</button>';}).join('')+'</div><p class="'+(all?'ok':'ex')+'">'+F(all?P.jokenOK:P.jokenNG)+'</p>';
+ var lk='<p class="ex">'+F(P.linkLead)+'</p><div class="navbtns"><button class="btn pri" data-act="copy">'+F(P.linkBtn)+'</button></div><input class="linkbox" id="linkbox" readonly value="'+esc(shareUrl(''))+'"><p class="msg" id="copymsg"></p>';
+ var clr=askClear?'<p class="warn">'+F(P.clearAsk)+'</p><div class="navbtns"><button class="btn" style="border-color:#b3261e;background:#b3261e;color:#fff" data-act="clearyes">'+F(P.yes)+'</button><button class="btn" data-act="clearno">'+F(P.no)+'</button></div>':'<button class="btn sm" style="border-color:#b3261e;color:#b3261e" data-act="clear">'+F(P.clear)+'</button>';
+ var right=card(F(P.jokenH),jc)+card(F(P.linkH),lk)+card(F(P.schedH),lis(T(P.sched)))+card(F(DATA.ui.printBtn),printBtns())+'<div class="card">'+clr+'</div>';
+ return '<div class="grid"><div>'+left+'</div><div>'+right+'</div></div>';
+}
+
+/* ---------- 時計（副司会） ---------- */
+function trem(){return timer.run?(timer.end-Date.now())/1000:timer.rem;}
+function fmt(s){s=Math.max(0,Math.ceil(s));var m=Math.floor(s/60),r=s%60;return m+':'+(r<10?'0':'')+r;}
+function tSet(sec){timer={run:false,end:0,rem:sec,base:sec,touched:false};}
+function pillarSec(){var it=curItem(),m=parseInt(prep.m[it.talk?CP:0],10);return (m>0?m:10)*60;}
+function bigBtn(){return '<button class="btn big" data-act="fsopen">'+IC.big+F(DATA.ui.bigShow)+'</button>';}
+function timerCard(){
+ var ps=pillarSec()/60;
+ return '<div class="card"><h2>'+F(DATA.ui.timer)+'</h2><div class="tcard" id="tcard"><div class="presets"><button data-act="tset" data-v="'+ps*60+'">'+F(DATA.ui.tPillar)+'（'+ps+'分）</button><button data-act="tset" data-v="60">1分</button><button data-act="tset" data-v="180">3分</button><button data-act="tset" data-v="300">5分</button></div>'+
+  '<div class="digits" id="tdig">0:00</div><div class="tstatus" id="tst"></div>'+
+  '<div class="tbtns"><button class="btn pri" data-act="tgo" id="tgo"></button><button class="btn" data-act="treset">'+F(DATA.ui.tReset)+'</button><button class="btn" data-act="tplus">'+F(DATA.ui.tPlus)+'</button>'+bigBtn()+'</div></div></div>';
+}
+function tState(){var r=trem();return {r:r,over:timer.touched&&r<=0,warn:timer.touched&&r>0&&r<=60};}
+function tStatusText(x){return F(x.over?DATA.ui.tOver:x.warn?DATA.ui.tLeft:timer.run?DATA.ui.tRun:timer.touched?DATA.ui.tStop:DATA.ui.tReady);}
+function updClock(){
+ var d=new Date(),p=function(x){return (x<10?'0':'')+x;},t=d.getHours()+':'+p(d.getMinutes());
+ var cs=document.querySelectorAll('.clk');for(var i=0;i<cs.length;i++)cs[i].textContent=t;
+ var x=tState();
+ var fs=$('fs');
+ if(fs&&fs.classList.contains('show')){
+  var fd=$('fsdig');if(fd)fd.textContent=x.over?'0:00':fmt(x.r);
+  fs.className='show'+(x.over?' over':(x.warn?' warn1':''));
+  var fst=$('fsst');if(fst)fst.innerHTML=x.over?F(DATA.ui.tOver)+'　＋'+fmt(-x.r):tStatusText(x);
+  var fg=$('fsgo');if(fg)fg.innerHTML=F(timer.run?DATA.ui.tPause:DATA.ui.tStart);
+ }
+ var dig=$('tdig');if(!dig)return;
+ dig.textContent=fmt(x.r);
+ var tc=$('tcard');if(tc)tc.className='tcard'+(x.over?' over':(x.warn?' warn1':''));
+ var st=$('tst');if(st)st.innerHTML=tStatusText(x);
+ var go=$('tgo');if(go)go.innerHTML=F(timer.run?DATA.ui.tPause:DATA.ui.tStart);
+}
+/* 全画面の時計：Fullscreen API。使えないときは、画面いっぱいの重ね表示。音は出さない。 */
+var wakeLock=null;
+function fsOpen(){
+ var fs=$('fs');
+ if(!fs){fs=document.createElement('div');fs.id='fs';document.body.appendChild(fs);}
+ fs.setAttribute('role','dialog');
+ fs.innerHTML='<div class="fsclose"><button data-act="fsclose">'+F(DATA.ui.closeNote)+'</button></div><div id="fsdig">0:00</div><div id="fsst"></div>'+
+  '<div class="fsb"><button data-act="fsminus">−1分</button><button id="fsgo" data-act="tgo"></button><button data-act="tplus">＋1分</button></div>';
+ fs.className='show';
+ try{if(fs.requestFullscreen){var pr=fs.requestFullscreen();if(pr&&pr.catch)pr.catch(function(){});}else if(fs.webkitRequestFullscreen)fs.webkitRequestFullscreen();}catch(e){}
+ try{if(navigator.wakeLock&&navigator.wakeLock.request)navigator.wakeLock.request('screen').then(function(w){wakeLock=w;}).catch(function(){});}catch(e){}
+ updClock();
+}
+function fsClose(){
+ var fs=$('fs');if(fs)fs.className='';
+ try{if(document.fullscreenElement&&document.exitFullscreen){var pr=document.exitFullscreen();if(pr&&pr.catch)pr.catch(function(){});}}catch(e){}
+ try{if(wakeLock){wakeLock.release();wakeLock=null;}}catch(e){}
+}
+document.addEventListener('fullscreenchange',function(){if(!document.fullscreenElement){var fs=$('fs');if(fs&&fs.classList.contains('show'))fsClose();}});
+document.addEventListener('visibilitychange',function(){var fs=$('fs');if(document.visibilityState==='visible'&&fs&&fs.classList.contains('show')&&!wakeLock){try{if(navigator.wakeLock)navigator.wakeLock.request('screen').then(function(w){wakeLock=w;}).catch(function(){});}catch(e){}}});
+window.addEventListener('resize',function(){updClock();});
+
+/* ---------- 画面：子ども ---------- */
+/* 上から：学年とステップ → 役割タブ → いまの段階（道のり） → セリフ・やること → 次へ／もどる */
+function roadHtml(){
+ var a=seq(),i=seqIdx(),it=curItem(),pv=a[i-1],nx=a[i+1];
+ var dots='';
+ if(it.talk){var ql=phList(pos.pil),qi=ql.indexOf(pos.ph);dots='<div class="rdots">'+ql.map(function(q,k){return '<span class="'+(k===qi?'on':(k<qi?'done':''))+'">'+F(phName(q))+'</span>';}).join('')+'</div>';}
+ var nowName=it.talk?F(phName(pos.ph)):F(it.n);var nowSub=it.talk?'<div class="nsub">'+F(it.stage.n)+(pl(CP)?'　'+pl(CP):'')+'</div>':'';
+ var h='<div class="rline"><div class="rprev">'+(pv?'<small>'+F(DATA.ui.prevLab)+'</small>'+itemAt(pv):'')+'</div><span class="rarr">›</span>'+
+  '<div class="rnow"><small>'+F(DATA.ui.now)+'</small>'+nowSub+'<div class="nm">'+nowName+'</div>'+dots+'</div>'+
+  '<span class="rarr">›</span><div class="rnext">'+(nx?'<small>'+F(DATA.ui.next)+'</small>'+itemAt(nx):'')+'</div></div>';
+ /* ぜんぶ見る：段階の一覧（ここから跳べる） */
+ var st=stages(),ci=0;st.forEach(function(s,k){if(s.id===it.stage.id)ci=k;});
+ h+='<div class="rall"><button data-act="bandall" aria-expanded="'+(bandAll?'true':'false')+'">'+F(bandAll?DATA.ui.lessBand:DATA.ui.moreBand)+'</button></div>';
+ h+='<div id="band">'+st.map(function(s,k){var cl=k===ci?'now':(k<ci?'past':'');return '<button data-act="stage" data-v="'+s.id+'" class="'+cl+'">'+F(s.n)+'</button>';}).join('')+'</div>';
+ h+='<div id="sub">';
+ if(it.talk)for(var p=0;p<nP();p++){
+  var lb=pl(p);
+  h+='<div class="pg">'+(lb?'<b>'+lb+'</b>':'');
+  phList(p).forEach(function(q){var cl=(p===pos.pil&&q===pos.ph)?'now':((p<pos.pil||(p===pos.pil&&phList(p).indexOf(q)<phList(p).indexOf(pos.ph)))?'past':'');h+='<button data-act="ph" data-p="'+p+'" data-q="'+q+'" class="'+cl+'">'+F(phName(q))+'</button>';});
+  h+='</div>';
+ }
+ h+='</div>';
+ curItem();
+ return '<div id="road" class="'+(bandAll?'open':'')+'">'+h+'</div>';
+}
+function menuHtml(){
+ if(!menuOpen)return '';
+ function a(href,t,act){return '<a href="'+href+'" '+(act?'data-act="'+act+'"':'target="_blank" rel="noopener"')+'>'+t+'</a>';}
+ return '<div class="menu" id="menu"><button data-act="choose">'+F(DATA.ui.rechoose)+'</button>'+a('#tv',F(DATA.ui.toTv))+a(printHref(1),F(DATA.ui.printKw),'toprint')+a(printHref(0),F(DATA.ui.printHead),'toprint')+a('#teacher',F(DATA.ui.toTeacher))+'</div>';
+}
+function renderAll(){
+ if(VIEW==='tv')return renderTV();
+ if(VIEW==='teacher')return renderTeacher();
+ if(VIEW==='print')return renderPrint();
+ var app=$('app');document.documentElement.className=G?'b-'+G:'';app.className='';
+ if(!G||!S||chooser){app.innerHTML=chooseHtml();return;}
+ fixPos();
+ var it=curItem();
+ app.setAttribute('style',rcStyle(TAB));
+ var h='<div class="top"><h1>'+F(DATA.ui.title)+'</h1><span class="lv">'+F(DATA.ui.bandName[G])+'・ステップ'+S+'</span><span class="sp"></span><span class="clk"></span>'+
+  '<button class="menubtn" data-act="menu" aria-expanded="'+(menuOpen?'true':'false')+'">'+IC.menu+F(DATA.ui.menu)+'</button>'+menuHtml()+'</div>';
+ h+='<div class="agenda">'+F(DATA.ui.gidai)+'：<b>'+fv(prep.gidai)+'</b><small>'+F(DATA.ui.meate)+'：<b>'+fv(prep.meate)+'</b></small></div>';
+ if(S>1&&!noteClosed()[S])h+='<div class="note"><span>'+F(DATA.ui.stepNote[S])+'</span><button class="nclose" data-act="closenote">'+F(DATA.ui.closeNote)+'</button></div>';
+ var tabs=['prep','s','f','k','n','m'];
+ h+='<div id="tabs" role="tablist">'+tabs.map(function(t){var lab=t==='prep'?F(DATA.ui.prepTab):role(t);return '<button role="tab" aria-selected="'+(TAB===t)+'" data-act="tab" data-v="'+t+'" class="'+(TAB===t?'on':'')+'" style="--tc:'+RC[t][0]+'">'+IC[t]+'<span>'+lab+'</span></button>';}).join('')+'</div>';
+ if(TAB!=='prep')h+=roadHtml();
+ var body=TAB==='prep'?tabPrep():TAB==='s'?tabS():TAB==='f'?tabF():TAB==='k'?tabK():TAB==='n'?tabN():tabM();
+ var nav=TAB==='prep'?'':'<div class="navbar"><button class="back" data-act="prev">'+IC.back+F(DATA.ui.prevBtn)+'</button><button class="go" data-act="next">'+F(DATA.ui.goBtn)+IC.go+'</button></div>';
+ h+='<main id="main"'+(nav?' class="hasnav"':'')+'>'+body+'<p class="goal">'+F(DATA.ui.goal[S])+'</p>'+nav+'</main>';
+ app.innerHTML=h;
+ document.querySelectorAll('.boardsc').forEach(function(e){e.scrollLeft=e.scrollWidth;});
+ updClock();
+}
+function chooseHtml(){
+ var g=tmpG||G,s=tmpS||S;var keep=G;G=g||'lo';
+ var h='<header><h1>'+F(DATA.ui.title)+'</h1></header><div class="choose">';
+ h+='<h2>'+F(DATA.ui.chooseBand)+'</h2><div class="opts">'+BANDS.map(function(b){G=b;var t=F(DATA.ui.bandName[b])+'<small>'+F(DATA.ui.bandSub[b])+'</small>';return '<button data-act="cg" data-v="'+b+'" class="'+(g===b?'on':'')+'">'+t+'</button>';}).join('')+'</div>';
+ G=g||'lo';
+ h+='<h2>'+F(DATA.ui.chooseStep)+'</h2><div class="opts">'+[1,2,3].map(function(n){return '<button data-act="cs" data-v="'+n+'" class="'+(s===n?'on':'')+'">'+F(DATA.ui.stepName[n])+'<small>'+F(DATA.ui.stepSub[n])+'</small></button>';}).join('')+'</div>';
+ h+='<button class="btn pri gobtn" data-act="cgo"'+((g&&s)?'':' disabled style="opacity:.5"')+'>'+F(DATA.ui.chooseGo)+'</button><p class="ex" style="margin-top:.5rem">'+F(DATA.ui.chooseHint)+'</p></div>';
+ G=keep;return h;
+}
+
+/* ---------- 画面：全体（テレビ） ---------- */
+function tvRoleLine(it){
+ var labs=T(DATA.koku.pos),w=whoOf(it);
+ var k=w?w.map(function(x,i){return '<span class="nw">'+F(labs[i])+'：'+F(x[0])+'</span>';}).join('／'):F(doOf(it,'k')[0]||'');
+ var rows=[['k',k],['f',F(doOf(it,'f')[0]||'')],['n',F(doOf(it,'n')[0]||'')]];
+ return '<div class="tvbox tvrole"><div class="k">'+F(DATA.ui.tvRole)+'</div>'+rows.map(function(r){return '<div class="rr"><span class="pill" style="background:'+RC[r[0]][0]+'">'+role(r[0])+'</span>'+r[1]+'</div>';}).join('')+'</div>';
+}
+function renderTV(){
+ document.documentElement.className='tv';var app=$('app');app.className='wide';
+ if(!G)G='lo';if(!S)S=1;
+ fixPos();var it=curItem();
+ var h='<div class="tvtop"><h1>'+F(DATA.ui.title)+'　'+F(DATA.ui.toTv)+'</h1><div class="sp"></div><span class="clk"></span></div><div class="tvwrap">';
+ h+='<div class="tvgrid"><div>';
+ h+='<div class="tvbox"><div class="k">'+F(DATA.ui.gidai)+'</div><div class="v">'+fv(prep.gidai)+'</div></div>';
+ h+='<div class="tvbox"><div class="k">'+F(DATA.ui.meate)+'</div><div class="v" style="font-size:1.4rem">'+fv(prep.meate)+'</div></div>';
+ h+='<div class="tvbox"><div class="k">'+F(DATA.ui.hashira)+'</div>';
+ for(var p=0;p<nP();p++){
+  var on=S<3&&it.talk&&p===pos.pil,m=String(prep.m[p]||'').trim(),lb=pl(p);
+  h+='<div class="tvp'+(on?' now':'')+'"><div class="t">'+(lb?lb+'　':'')+fv(prep.h[p])+(m?'<span class="ex">（'+esc(m)+'分）</span>':'')+'</div>';
+  /* ステップ3では段階を出さない（議題・めあて・柱・時計だけ） */
+  if(S<3)h+='<div class="phs">'+phList(p).map(function(q){return '<span class="'+(on&&q===pos.ph?'now':'')+'">'+F(phName(q))+'</span>';}).join('')+'</div>';
+  h+='</div>';
+ }
+ h+='</div></div><div>';
+ if(S<3){
+  h+='<div class="tvnow"><div class="k">'+F(DATA.ui.now)+'</div><div class="v">'+headText(it)+'</div></div>';
+  var a=seq(),i=seqIdx(),nx=a[i+1];
+  if(nx)h+='<div class="tvbox"><div class="k">'+F(DATA.ui.next)+'</div><div class="v" style="font-size:1.3rem">'+itemAt(nx)+'</div></div>';
+  h+=tvRoleLine(curItem());
+ }
+ if(timer.touched||timer.run)h+='<div class="tvtimer"><div class="tcard" id="tcard"><div class="digits" id="tdig"></div><div class="tstatus" id="tst"></div><div class="tbtns">'+bigBtn()+'</div></div></div>';
+ h+='</div></div>';
+ if(!lsGet(LIVE))h+='<div class="empty" style="margin-top:.8rem">'+F(DATA.ui.tvWait)+'</div>';
+ h+='</div>';
+ app.innerHTML=h;updClock();
+}
+
+/* ---------- 画面：流れ表（印刷）  k=1 キーワードつき／k=0 見出しだけ ---------- */
+function renderPrint(){
+ document.documentElement.className='';var app=$('app');app.className='';
+ if(!G)G='hi';if(!S)S=3;
+ var P=DATA.print,kname=PK?DATA.ui.printKw:DATA.ui.printHead;
+ var h='<div class="pr"><div class="pbar noprint"><button class="btn pri" data-act="doprint">'+F(P.doPrint)+'</button>'+
+  '<a class="btn'+(PK?' on':'')+'" style="display:inline-flex;align-items:center;text-decoration:none" href="'+printHref(1)+'" data-act="toprint">'+F(DATA.ui.printKw)+'</a>'+
+  '<a class="btn'+(PK?'':' on')+'" style="display:inline-flex;align-items:center;text-decoration:none" href="'+printHref(0)+'" data-act="toprint">'+F(DATA.ui.printHead)+'</a>'+
+  '<a class="btn" style="display:inline-flex;align-items:center;text-decoration:none" href="#g='+G+'&s='+S+'" data-act="back">'+F(P.back)+'</a><span class="ex">'+F(P.tip)+'</span></div><div class="sheet'+(PK?'':' head')+'">';
+ h+='<h1>'+F(P.title)+(String(prep.kai||'').trim()&&G!=='lo'?'（第'+esc(prep.kai)+'回）':'')+'<small class="kind">'+F(PK?DATA.ui.kindKw:DATA.ui.kindHead)+'</small></h1><div class="meta"><b>'+F(DATA.ui.gidai)+'</b><span>'+esc(prep.gidai||'')+'</span><b>'+F(DATA.ui.meate)+'</b><span>'+esc(prep.meate||'')+'</span></div><ol>';
+ function kwOf(arr){return PK?'<span>'+arr.map(function(k){return Fp(k);}).join('・')+'</span>':'';}
+ stages().forEach(function(s){
+  if(s.talk){
+   h+='</ol><div class="talk"><b>'+F(s.n)+'</b>';
+   for(var p=0;p<nP();p++){CP=p;var m=String(prep.m[p]||'').trim(),lb=pl(p);
+    h+='<div style="margin-top:2pt"><b>'+(lb?lb+'　':'')+esc(prep.h[p]||'')+'</b>'+(m?'（'+esc(m)+'分）':'')+'</div>';
+    var ql=phList(p);
+    if(PK&&p===0)ql.forEach(function(q){var t=q<0?DATA.talkSensei[G]:talkPh()[q];h+='<div class="ph"><span class="bx"></span><b style="min-width:6.5em">'+F(t.n)+'</b>'+kwOf(t.kw)+'</div>';});
+    else h+='<div class="ph">'+ql.map(function(q){return '<span class="bx"></span><b>'+F(phName(q))+'</b>';}).join(' → ')+'</div>';
+   }
+   CP=0;h+='</div><ol>';return;
+  }
+  h+='<li><span class="bx"></span><b>'+F(s.n)+'</b>'+kwOf(s.kw)+'</li>';
+ });
+ h+='</ol><div class="help"><b>'+F(P.help)+'</b>'+lis(T(P.helpItems),'')+'</div></div></div>';
+ app.innerHTML=h;
+}
+
+/* ---------- 画面：先生 ---------- */
+function renderTeacher(){
+ document.documentElement.className='teacher';var app=$('app');app.className='';
+ var g=G||'hi',s=S||1;
+ var h='<header><h1>学級会ナビ　先生画面</h1><div class="agenda2">議題：'+fv(prep.gidai)+'<small>この画面は大人向けです。子どもの画面とは別に開いてください。</small></div><div class="hbtns"><span class="clk"></span></div></header><div class="tw">';
+ h+='<h2>いまの設定と画面の切りかえ</h2><div class="tctl"><b>学年の段階</b>'+[['lo','低学年'],['mid','中学年'],['hi','高学年']].map(function(x){return '<button data-act="tg" data-v="'+x[0]+'" class="'+(g===x[0]?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div>';
+ h+='<div class="tctl"><b>ステップ</b>'+[1,2,3].map(function(n){return '<button data-act="ts" data-v="'+n+'" class="'+(s===n?'on':'')+'">ステップ'+n+'</button>';}).join('')+'</div>';
+ function ta(href,t){return '<a class="btn" style="display:inline-flex;align-items:center;text-decoration:none" href="'+href+'" target="_blank" rel="noopener">'+t+'</a>';}
+ h+='<div class="tctl">'+ta('#g='+g+'&s='+s,'子どもの画面を開く')+ta('#tv','全体画面を開く')+ta('#print&g='+g+'&s='+s+'&k=1','流れ表（キーワードつき）')+ta('#print&g='+g+'&s='+s+'&k=0','流れ表（見出しだけ）')+'</div>';
+ h+='<h2>このナビのねらい</h2><ul>'+TEACHER.aim.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';
+ h+='<h2>学習指導要領との対応</h2><p class="ex">文言は「小学校学習指導要領（平成29年告示）解説 特別活動編」から、原典どおりに写しています（句読点も原典のまま）。</p>';
+ TEACHER.youryou.forEach(function(y){h+='<h3>'+esc(y.h)+'</h3><div class="quote">'+esc(y.q)+'<span class="src">'+esc(y.src)+'</span></div>';});
+ h+='<h2>ステップの進め方の目安</h2><p class="ex">時期は目安です。学級のようすで前後してかまいません。</p><div class="tblwrap"><table class="tt"><tr><th>ステップ</th><th>画面に出るもの</th><th>次に進む目安</th><th>先生のかかわり</th></tr>'+TEACHER.steps.map(function(r){return '<tr>'+r.map(function(c){return '<td>'+esc(c)+'</td>';}).join('')+'</tr>';}).join('')+'</table></div>';
+ h+='<h2>先生のお話の入れどころ</h2><div class="tblwrap"><table class="tt">'+TEACHER.talkPoints.map(function(r){return '<tr><th style="width:12em">'+esc(r[0])+'</th><td>'+esc(r[1])+'</td></tr>';}).join('')+'</table></div>';
+ h+='<h2>学年の段階による違い</h2><div class="tblwrap"><table class="tt">'+TEACHER.bandDiff.map(function(r,i){return '<tr>'+r.map(function(c,j){return (i===0||j===0?'<th>':'<td>')+esc(c)+(i===0||j===0?'</th>':'</td>');}).join('')+'</tr>';}).join('')+'</table></div>';
+ h+='<h2>使い方</h2><ol>'+TEACHER.howto.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol>';
+ h+='</div>';
+ G=g;app.innerHTML=h;updClock();
+}
+
+/* ---------- 操作 ---------- */
+document.addEventListener('click',function(e){
+ var b=e.target.closest('[data-act]');
+ if(menuOpen&&(!b||b.getAttribute('data-act')!=='menu')&&!e.target.closest('#menu')){menuOpen=false;if(!b){renderAll();return;}}
+ if(!b||b.disabled)return;
+ var a=b.getAttribute('data-act'),v=b.getAttribute('data-v');
+ if(a==='menu'){menuOpen=!menuOpen;renderAll();return;}
+ if(a==='fsopen'){fsOpen();return;}
+ if(a==='fsclose'){fsClose();return;}
+ if(a==='fsminus'){if(timer.run)timer.end-=60000;else timer.rem=Math.max(0,timer.rem-60);timer.touched=true;broadcast();updClock();return;}
+ if(a==='cg'){tmpG=v;if(!tmpS)tmpS=S;renderAll();return;}
+ if(a==='cs'){tmpS=+v;if(!tmpG)tmpG=G;renderAll();return;}
+ if(a==='cgo'){var g=tmpG||G,s=tmpS||S;if(!g||!s)return;if(g!==G)pos={id:'start',pil:0,ph:0};G=g;S=s;tmpG=null;tmpS=null;chooser=false;changed();window.scrollTo(0,0);return;}
+ if(a==='choose'){menuOpen=false;chooser=true;tmpG=G;tmpS=S;renderAll();return;}
+ if(a==='stage'){pos={id:v,pil:0,ph:0};changed();return;}
+ if(a==='ph'){pos={id:'talk',pil:+b.getAttribute('data-p'),ph:+b.getAttribute('data-q')};changed();return;}
+ if(a==='next'){move(1);return;}
+ if(a==='prev'){move(-1);return;}
+ if(a==='tab'){TAB=v;save();renderAll();return;}
+ if(a==='bandall'){bandAll=!bandAll;renderAll();return;}
+ if(a==='closenote'){var nc=noteClosed();nc[S]=true;lsSet(NOTEKEY,JSON.stringify(nc));renderAll();return;}
+ if(a==='pt'){var k=b.getAttribute('data-k');prep[k]=!prep[k];changed();return;}
+ if(a==='sen'){prep.sen=v==='each'?'each':'once';changed();return;}
+ if(a==='lp'){prep.lp=+v===2?2:1;changed();return;}
+ if(a==='jo'){var i=+b.getAttribute('data-i');prep.jo[i]=!prep.jo[i];changed();return;}
+ if(a==='copy'){doCopy();return;}
+ if(a==='clear'){askClear=true;renderAll();return;}
+ if(a==='clearno'){askClear=false;renderAll();return;}
+ if(a==='clearyes'){askClear=false;prep=defPrep();pos={id:'start',pil:0,ph:0};tSet(600);changed();return;}
+ if(a==='tset'){tSet(+v);changed(false);updClock();return;}
+ if(a==='tgo'){if(timer.run){timer.rem=trem();timer.run=false;}else{timer.end=Date.now()+timer.rem*1000;timer.run=true;timer.touched=true;}broadcast();updClock();return;}
+ if(a==='treset'){tSet(timer.base);broadcast();updClock();return;}
+ if(a==='tplus'){if(timer.run)timer.end+=60000;else timer.rem+=60;timer.touched=true;broadcast();updClock();return;}
+ if(a==='toprint'){e.preventDefault();location.hash=b.getAttribute('href');return;}
+ if(a==='doprint'){window.print();return;}
+ if(a==='back'){e.preventDefault();location.hash='#g='+G+'&s='+S;return;}
+ if(a==='tg'){G=v;renderAll();return;}
+ if(a==='ts'){S=+v;renderAll();return;}
+});
+function doCopy(){
+ var url=shareUrl(''),box=$('linkbox'),msg=$('copymsg');if(box)box.value=url;
+ function ok(){if(msg){msg.innerHTML=F(DATA.prep.linkDone);msg.className='msg ok';}}
+ function ng(){if(box){box.focus();box.select();}try{if(document.execCommand('copy')){ok();return;}}catch(e){}if(msg){msg.innerHTML=F(DATA.prep.linkFail);msg.className='msg warn';}}
+ try{if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(url).then(ok,ng);return;}}catch(e){}
+ ng();
+}
+var inTimer=null;
+function z2h(v){return v.replace(/[０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-65248);});}
+document.addEventListener('input',function(e){
+ var t=e.target;if(!t.getAttribute)return;
+ var f=t.getAttribute('data-f'),hi=t.getAttribute('data-h'),mi=t.getAttribute('data-m');
+ if(f==='kai'||f==='fm'){var nv=z2h(t.value).replace(/[^0-9]/g,'').slice(0,f==='kai'?3:2);prep[f]=nv;if(t.value!==nv)t.value=nv;}
+ else if(f){prep[f]=t.value.slice(0,f==='riyu'?200:120);}
+ else if(hi!=null){prep.h[+hi]=t.value.slice(0,80);}
+ else if(mi!=null){var v=z2h(t.value).replace(/[^0-9]/g,'').slice(0,3);prep.m[+mi]=v;if(t.value!==v)t.value=v;
+  var tot=0;for(var i=0;i<maxP();i++){var mm=parseInt(prep.m[i],10);if(mm>0)tot+=mm;}var pt=$('ptotal');if(pt)pt.innerHTML=F(DATA.prep.total)+'：'+tot+F(DATA.prep.min);}
+ else return;
+ save();clearTimeout(inTimer);inTimer=setTimeout(function(){broadcast();var lb=$('linkbox');if(lb)lb.value=shareUrl('');var ag=document.querySelector('.agenda');if(ag)ag.innerHTML=F(DATA.ui.gidai)+'：'+fv(prep.gidai)+'<small>'+F(DATA.ui.meate)+'：'+fv(prep.meate)+'</small>';},250);
+});
+function typing(){var a=document.activeElement;return a&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA');}
+function onRemote(o){
+ if(!o||o.src===ID)return;
+ var oldG=G,oldS=S;apply(o);
+ if(VIEW==='main'&&typing()){G=oldG||G;S=oldS||S;updClock();return;}
+ renderAll();
+}
+if(bc)bc.onmessage=function(ev){onRemote(ev.data);};
+window.addEventListener('storage',function(e){if(e.key===LIVE&&e.newValue){try{onRemote(JSON.parse(e.newValue));}catch(x){}}});
+window.addEventListener('hashchange',function(){boot();});
+
+/* ---------- 起動 ---------- */
+function boot(){
+ var hp=parseHash();
+ VIEW=(hp.v==='tv'||hp.v==='teacher'||hp.v==='print')?hp.v:'main';
+ PK=hp.k!=='0';
+ load();
+ if(VIEW==='tv'){try{var l=JSON.parse(lsGet(LIVE)||'null');if(l)apply(l);}catch(e){}}
+ if(BANDS.indexOf(hp.g)>=0)G=hp.g;
+ if(hp.s==='1'||hp.s==='2'||hp.s==='3')S=+hp.s;
+ if(hp.d){var o=dec(hp.d);if(o){prep=cleanPrep(o);if(VIEW==='main'){save();broadcast();}}}
+ if(VIEW==='main'&&G&&S){save();setHash();broadcast();}
+ renderAll();
+}
+setInterval(updClock,500);
+boot();
+})();
+</script>
+</body>
+</html>
