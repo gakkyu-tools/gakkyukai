@@ -328,6 +328,57 @@ table.tt th{background:#e8eef8}
  .agenda{padding:.25rem .6rem}
 }
 @media (max-width:420px){.top .clk{display:none}}
+/* ---- きょうの ながれ（路線図）：紺〜灰の中立色。役割の色は使わない ---- */
+:root{--rs-now:#1f3a5f;--rs-done:#94a3b8;--rs-todo:#64748b;--rs-line:#cbd5e1}
+.rosen{display:none}
+.rhbar{display:flex;align-items:center;height:1.6rem;margin:0 0 .45rem;padding:0 .3rem}
+.rhbar .d{flex:0 0 auto;width:.7rem;height:.7rem;border-radius:50%;box-sizing:border-box}
+.rhbar .d.done{background:var(--rs-done)}
+.rhbar .d.todo{background:#fff;border:2px solid var(--rs-todo)}
+.rhbar .d.now{width:1.3rem;height:1.3rem;background:var(--rs-now);box-shadow:0 0 0 2px #fff,0 0 0 4px var(--rs-now)}
+.rhbar .l{flex:1 1 0;min-width:2px;height:3px;background:var(--rs-line)}
+.rhbar .l.done{background:var(--rs-done)}
+.rosen{font-size:.85rem}
+.rosen .rt{font-weight:bold;font-size:1em;color:var(--sub);margin:0 0 .4em .2em;line-height:1.3}
+.rosen ol{list-style:none;margin:0;padding:0}
+.rosen li{position:relative;padding:.22em 0 .22em 2em;line-height:1.35}
+.rosen>ol>li::before{content:"";position:absolute;left:calc(.9em - 1.5px);top:0;bottom:0;width:3px;background:var(--rs-line)}
+.rosen>ol>li:first-child::before{top:1em}
+.rosen>ol>li:last-child::before{bottom:auto;height:1em}
+.rosen>ol>li.done::before{background:var(--rs-done)}
+.rosen .dt{position:absolute;left:0;top:.1em;width:1.8em;height:1.8em;display:flex;align-items:center;justify-content:center}
+.rosen .dt::before{content:"";box-sizing:border-box;border-radius:50%;display:block}
+.rosen li.done>.dt::before{content:"\2713";font-size:.62em;width:1.5em;height:1.5em;line-height:1.5em;text-align:center;background:var(--rs-done);color:#fff;font-weight:bold}
+.rosen li.todo>.dt::before{width:1em;height:1em;background:#fff;border:3px solid var(--rs-todo)}
+.rosen li.now>.dt::before{width:1.35em;height:1.35em;background:var(--rs-now);box-shadow:0 0 0 2px #fff,0 0 0 4px var(--rs-now)}
+.rosen li.done>.nm{color:var(--rs-todo);font-size:.9em}
+.rosen li.todo>.nm{color:var(--ink)}
+.rosen li.now>.nm{color:var(--rs-now);font-weight:bold;font-size:1.2em}
+.rosen li.now>em{display:inline-block;font-style:normal;font-size:.7em;font-weight:bold;background:var(--rs-now);color:#fff;border-radius:999px;padding:0 .6em;margin-left:.4em;vertical-align:.1em}
+.rosen li ol{margin-top:.1em}
+.rosen li li{padding:.12em 0 .12em 1.5em;font-size:.88em}
+.rosen li li .dt{width:1.2em;height:1.2em;top:.2em}
+.rosen li li.now>.nm{font-size:1em}
+.rosen li li.now>.dt::before{width:1.1em;height:1.1em}
+html.b-lo .rosen .nm{word-break:keep-all;overflow-wrap:normal}
+@media (min-width:901px){
+ .rhbar{display:none}
+ .lay{display:grid;grid-template-columns:11rem minmax(0,1fr);align-items:start;padding-left:1rem}
+ .lay .lc #road{margin-left:1rem}
+ .lay main{padding-left:1rem}
+ .rosen{display:block;position:sticky;top:.6rem;margin-top:.6rem;max-height:calc(100vh - 9rem);overflow-y:auto;padding:.5rem .4rem .5rem .3rem;background:#fff;border:2px solid var(--line);border-radius:14px}
+ .tvlay{display:grid;grid-template-columns:14rem minmax(0,1fr);gap:1rem;align-items:start}
+ .tvlay .rosen{top:.6rem;margin-top:0;font-size:.8rem;max-height:calc(100vh - 7rem)}
+}
+/* 背の低い画面（Chromebook 1366x768 など）では、行をつめて最後の段階まで最初から見えるように */
+@media (min-width:901px) and (max-height:860px){.lay .rosen{font-size:.78rem;padding-top:.35rem;padding-bottom:.35rem}.lay .rosen li{padding-top:.06em;padding-bottom:.06em;line-height:1.3}.lay .rosen li li{padding-top:0;padding-bottom:0}.lay .rosen .rt{margin-bottom:.2em}}
+.tvmain .rhbar{margin:.2rem 0 .8rem}
+@media (min-width:901px) and (max-height:860px){.tvlay .rosen{font-size:.72rem;max-height:none;overflow:visible}.tvlay .rosen li{padding-top:.05em;padding-bottom:.05em;line-height:1.3}.tvlay .rosen li li{padding-top:0;padding-bottom:0}}
+@media (min-width:901px) and (min-height:861px){.tvlay .rosen{font-size:.95rem}}
+/* 広い画面では一覧は左の路線図で見えるので、「ぜんぶ見る」は「えらんで とぶ」と呼ぶ */
+.bw{display:none}
+@media (min-width:901px){.bw{display:inline}.bn{display:none}}
+@media print{.rosen,.rhbar{display:none!important}}
 @media print{
  @page{size:A4 portrait;margin:10mm}
  body{background:#fff}
@@ -807,6 +858,8 @@ DATA.ui.kindHead={lo:'見出しだけ',mh:'見出しだけ'};
 /* ---------- 追加（UI直し：メニュー・道のり・全画面の時計・縦書きの黒板） ---------- */
 DATA.ui.menu={all:'メニュー'};
 DATA.ui.prevLab={lo:'まえ',mh:'前'};
+DATA.ui.rosen={lo:'きょうの ながれ',mh:'今日の流れ'};
+DATA.ui.pickBand={lo:'えらんで とぶ',mh:'えらんで とぶ'};
 DATA.ui.prevBtn={lo:'もどる',mh:'もどる'};
 DATA.ui.goBtn={lo:'つぎへ',mh:'次へ'};
 DATA.ui.bigShow={lo:'大きく 見せる',mh:'大きく{表示|ひょうじ}'};
@@ -1010,14 +1063,14 @@ function cleanPrep(o){
  p.sen=o.sen==='each'?'each':'once';p.lp=+o.lp===2?2:1;
  return p;
 }
-function cleanTimer(o){if(!o||typeof o!=='object')return timer;return {run:!!o.run,end:+o.end||0,rem:+o.rem||0,base:+o.base||600,touched:!!o.touched};}
+function cleanTimer(o){if(!o||typeof o!=='object')return timer;var e=+o.end||0;return {run:!!o.run,end:e,rem:+o.rem||0,base:+o.base||600,touched:!!o.touched,chimed:(e===timer.end&&!!timer.chimed)||!!o.chimed};}
 function apply(o){
  if(!o)return;
  if(BANDS.indexOf(o.g)>=0)G=o.g;
  if(o.s===1||o.s===2||o.s===3)S=o.s;
  if(o.prep)prep=cleanPrep(o.prep);
  if(o.pos&&typeof o.pos.id==='string')pos={id:o.pos.id,pil:+o.pos.pil||0,ph:+o.pos.ph||0};
- if(o.timer)timer=cleanTimer(o.timer);
+ if(o.timer){timer=cleanTimer(o.timer);schedChime();}
 }
 function load(){
  try{var o=JSON.parse(lsGet(KEY)||'null');if(o){apply(o);if(['prep','s','f','k','n','m'].indexOf(o.tab)>=0)TAB=o.tab;}}catch(e){}
@@ -1217,6 +1270,7 @@ function updClock(){
  var d=new Date(),p=function(x){return (x<10?'0':'')+x;},t=d.getHours()+':'+p(d.getMinutes());
  var cs=document.querySelectorAll('.clk');for(var i=0;i<cs.length;i++)cs[i].textContent=t;
  var x=tState();
+ if(x.over&&timer.run){if(!timer.chimed){timer.chimed=true;chime();}}else if(!x.over){timer.chimed=false;}
  var fs=$('fs');
  if(fs&&fs.classList.contains('show')){
   var fd=$('fsdig');if(fd)fd.textContent=x.over?'0:00':fmt(x.r);
@@ -1230,7 +1284,12 @@ function updClock(){
  var st=$('tst');if(st)st.innerHTML=tStatusText(x);
  var go=$('tgo');if(go)go.innerHTML=F(timer.run?DATA.ui.tPause:DATA.ui.tStart);
 }
-/* 全画面の時計：Fullscreen API。使えないときは、画面いっぱいの重ね表示。音は出さない。 */
+/* 全画面の時計：Fullscreen API。使えないときは、画面いっぱいの重ね表示。0になったらチャイムを1回。 */
+var actx=null;
+function audioUnlock(){try{var C=window.AudioContext||window.webkitAudioContext;if(!C)return;if(!actx)actx=new C();if(actx.state==='suspended')actx.resume();}catch(e){}}
+var chimeTO=0;
+function schedChime(){try{clearTimeout(chimeTO);if(timer.run)chimeTO=setTimeout(updClock,Math.max(0,trem()*1000)+50);}catch(e){}}
+function chime(){try{if(!actx)return;var t=actx.currentTime;[[880,0],[659,0.5]].forEach(function(n){var o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.value=n[0];g.gain.setValueAtTime(0.0001,t+n[1]);g.gain.exponentialRampToValueAtTime(0.6,t+n[1]+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+n[1]+1.8);o.connect(g);g.connect(actx.destination);o.start(t+n[1]);o.stop(t+n[1]+1.9);});}catch(e){}}
 var wakeLock=null;
 function fsOpen(){
  var fs=$('fs');
@@ -1254,6 +1313,38 @@ window.addEventListener('resize',function(){updClock();});
 
 /* ---------- 画面：子ども ---------- */
 /* 上から：学年とステップ → 役割タブ → いまの段階（道のり） → セリフ・やること → 次へ／もどる */
+/* ---------- きょうの ながれ（路線図）：押せない。いまの位置を見せるだけ ---------- */
+function rosenState(){
+ var st=stages(),cur=curStage(),ci=0;st.forEach(function(s,k){if(s.id===cur.id)ci=k;});
+ return {st:st,ci:ci};
+}
+function rosenHtml(){
+ var r=rosenState(),st=r.st,ci=r.ci;
+ var h='<nav class="rosen" aria-label="'+esc(T(DATA.ui.rosen))+'"><div class="rt">'+F(DATA.ui.rosen)+'</div><ol>';
+ st.forEach(function(s,k){
+  var c=k<ci?'done':(k===ci?'now':'todo');
+  h+='<li class="'+c+'"'+(c==='now'?' aria-current="step"':'')+'><i class="dt"></i><span class="nm">'+F(s.n)+'</span>';
+  if(s.talk&&pl(0)){
+   h+='<ol>';
+   for(var p=0;p<nP();p++){
+    var pc=c==='todo'?'todo':(c==='done'?'done':(p<pos.pil?'done':(p===pos.pil?'now':'todo')));
+    h+='<li class="'+pc+'"'+(pc==='now'?' aria-current="step"':'')+'><i class="dt"></i><span class="nm">'+pl(p)+'</span></li>';
+   }
+   h+='</ol>';
+  }
+  h+='</li>';
+ });
+ return h+'</ol></nav>';
+}
+function rosenBar(){
+ var r=rosenState(),st=r.st,ci=r.ci;
+ return '<div class="rhbar" role="img" aria-label="'+esc(T(DATA.ui.rosen))+'：'+(ci+1)+'／'+st.length+'">'+
+  st.map(function(s,k){return (k?'<b class="l'+(k<=ci?' done':'')+'"></b>':'')+'<i class="d '+(k<ci?'done':(k===ci?'now':'todo'))+'"></i>';}).join('')+'</div>';
+}
+function rosenFocus(){
+ var ra=document.querySelector('.rosen'),rl=document.querySelector('.rosen>ol>li.now');
+ if(ra&&rl&&ra.scrollHeight>ra.clientHeight)ra.scrollTop=Math.max(0,rl.offsetTop-ra.clientHeight/3);
+}
 function roadHtml(){
  var a=seq(),i=seqIdx(),it=curItem(),pv=a[i-1],nx=a[i+1];
  var dots='';
@@ -1264,7 +1355,7 @@ function roadHtml(){
   '<span class="rarr">›</span><div class="rnext">'+(nx?'<small>'+F(DATA.ui.next)+'</small>'+itemAt(nx):'')+'</div></div>';
  /* ぜんぶ見る：段階の一覧（ここから跳べる） */
  var st=stages(),ci=0;st.forEach(function(s,k){if(s.id===it.stage.id)ci=k;});
- h+='<div class="rall"><button data-act="bandall" aria-expanded="'+(bandAll?'true':'false')+'">'+F(bandAll?DATA.ui.lessBand:DATA.ui.moreBand)+'</button></div>';
+ h+='<div class="rall"><button data-act="bandall" aria-expanded="'+(bandAll?'true':'false')+'">'+(bandAll?F(DATA.ui.lessBand):'<span class="bw">'+F(DATA.ui.pickBand)+'</span><span class="bn">'+F(DATA.ui.moreBand)+'</span>')+'</button></div>';
  h+='<div id="band">'+st.map(function(s,k){var cl=k===ci?'now':(k<ci?'past':'');return '<button data-act="stage" data-v="'+s.id+'" class="'+cl+'">'+F(s.n)+'</button>';}).join('')+'</div>';
  h+='<div id="sub">';
  if(it.talk)for(var p=0;p<nP();p++){
@@ -1275,7 +1366,7 @@ function roadHtml(){
  }
  h+='</div>';
  curItem();
- return '<div id="road" class="'+(bandAll?'open':'')+'">'+h+'</div>';
+ return '<div id="road" class="'+(bandAll?'open':'')+'">'+rosenBar()+h+'</div>';
 }
 function menuHtml(){
  if(!menuOpen)return '';
@@ -1297,12 +1388,14 @@ function renderAll(){
  if(S>1&&!noteClosed()[S])h+='<div class="note"><span>'+F(DATA.ui.stepNote[S])+'</span><button class="nclose" data-act="closenote">'+F(DATA.ui.closeNote)+'</button></div>';
  var tabs=['prep','s','f','k','n','m'];
  h+='<div id="tabs" role="tablist">'+tabs.map(function(t){var lab=t==='prep'?F(DATA.ui.prepTab):role(t);return '<button role="tab" aria-selected="'+(TAB===t)+'" data-act="tab" data-v="'+t+'" class="'+(TAB===t?'on':'')+'" style="--tc:'+RC[t][0]+'">'+IC[t]+'<span>'+lab+'</span></button>';}).join('')+'</div>';
- if(TAB!=='prep')h+=roadHtml();
+ if(TAB!=='prep')h+='<div class="lay">'+rosenHtml()+'<div class="lc">'+roadHtml();
  var body=TAB==='prep'?tabPrep():TAB==='s'?tabS():TAB==='f'?tabF():TAB==='k'?tabK():TAB==='n'?tabN():tabM();
  var nav=TAB==='prep'?'':'<div class="navbar"><button class="back" data-act="prev">'+IC.back+F(DATA.ui.prevBtn)+'</button><button class="go" data-act="next">'+F(DATA.ui.goBtn)+IC.go+'</button></div>';
  h+='<main id="main"'+(nav?' class="hasnav"':'')+'>'+body+'<p class="goal">'+F(DATA.ui.goal[S])+'</p>'+nav+'</main>';
+ if(TAB!=='prep')h+='</div></div>';
  app.innerHTML=h;
  document.querySelectorAll('.boardsc').forEach(function(e){e.scrollLeft=e.scrollWidth;});
+ rosenFocus();
  updClock();
 }
 function chooseHtml(){
@@ -1327,7 +1420,7 @@ function renderTV(){
  if(!G)G='lo';if(!S)S=1;
  fixPos();var it=curItem();
  var h='<div class="tvtop"><h1>'+F(DATA.ui.title)+'　'+F(DATA.ui.toTv)+'</h1><div class="sp"></div><span class="clk"></span></div><div class="tvwrap">';
- h+='<div class="tvgrid"><div>';
+ h+='<div class="tvlay">'+rosenHtml()+'<div class="tvmain">'+rosenBar()+'<div class="tvgrid"><div>';
  h+='<div class="tvbox"><div class="k">'+F(DATA.ui.gidai)+'</div><div class="v">'+fv(prep.gidai)+'</div></div>';
  h+='<div class="tvbox"><div class="k">'+F(DATA.ui.meate)+'</div><div class="v" style="font-size:1.4rem">'+fv(prep.meate)+'</div></div>';
  h+='<div class="tvbox"><div class="k">'+F(DATA.ui.hashira)+'</div>';
@@ -1346,10 +1439,10 @@ function renderTV(){
   h+=tvRoleLine(curItem());
  }
  if(timer.touched||timer.run)h+='<div class="tvtimer"><div class="tcard" id="tcard"><div class="digits" id="tdig"></div><div class="tstatus" id="tst"></div><div class="tbtns">'+bigBtn()+'</div></div></div>';
- h+='</div></div>';
+ h+='</div></div></div></div>';
  if(!lsGet(LIVE))h+='<div class="empty" style="margin-top:.8rem">'+F(DATA.ui.tvWait)+'</div>';
  h+='</div>';
- app.innerHTML=h;updClock();
+ app.innerHTML=h;updClock();rosenFocus();
 }
 
 /* ---------- 画面：流れ表（印刷）  k=1 キーワードつき／k=0 見出しだけ ---------- */
@@ -1409,7 +1502,7 @@ document.addEventListener('click',function(e){
  if(a==='menu'){menuOpen=!menuOpen;renderAll();return;}
  if(a==='fsopen'){fsOpen();return;}
  if(a==='fsclose'){fsClose();return;}
- if(a==='fsminus'){if(timer.run)timer.end-=60000;else timer.rem=Math.max(0,timer.rem-60);timer.touched=true;broadcast();updClock();return;}
+ if(a==='fsminus'){if(timer.run)timer.end-=60000;else timer.rem=Math.max(0,timer.rem-60);timer.touched=true;schedChime();broadcast();updClock();return;}
  if(a==='cg'){tmpG=v;if(!tmpS)tmpS=S;renderAll();return;}
  if(a==='cs'){tmpS=+v;if(!tmpG)tmpG=G;renderAll();return;}
  if(a==='cgo'){var g=tmpG||G,s=tmpS||S;if(!g||!s)return;if(g!==G)pos={id:'start',pil:0,ph:0};G=g;S=s;tmpG=null;tmpS=null;chooser=false;changed();window.scrollTo(0,0);return;}
@@ -1429,10 +1522,10 @@ document.addEventListener('click',function(e){
  if(a==='clear'){askClear=true;renderAll();return;}
  if(a==='clearno'){askClear=false;renderAll();return;}
  if(a==='clearyes'){askClear=false;prep=defPrep();pos={id:'start',pil:0,ph:0};tSet(600);changed();return;}
- if(a==='tset'){tSet(+v);changed(false);updClock();return;}
- if(a==='tgo'){if(timer.run){timer.rem=trem();timer.run=false;}else{timer.end=Date.now()+timer.rem*1000;timer.run=true;timer.touched=true;}broadcast();updClock();return;}
- if(a==='treset'){tSet(timer.base);broadcast();updClock();return;}
- if(a==='tplus'){if(timer.run)timer.end+=60000;else timer.rem+=60;timer.touched=true;broadcast();updClock();return;}
+ if(a==='tset'){tSet(+v);schedChime();changed(false);updClock();return;}
+ if(a==='tgo'){audioUnlock();if(timer.run){timer.rem=trem();timer.run=false;}else{timer.end=Date.now()+timer.rem*1000;timer.run=true;timer.touched=true;}schedChime();broadcast();updClock();return;}
+ if(a==='treset'){tSet(timer.base);schedChime();broadcast();updClock();return;}
+ if(a==='tplus'){if(timer.run)timer.end+=60000;else timer.rem+=60;timer.touched=true;schedChime();broadcast();updClock();return;}
  if(a==='toprint'){e.preventDefault();location.hash=b.getAttribute('href');return;}
  if(a==='doprint'){window.print();return;}
  if(a==='back'){e.preventDefault();location.hash='#g='+G+'&s='+S;return;}
